@@ -4,8 +4,8 @@ import android.content.Context;
 
 public class GameConfig {
     
-    public static int PIECE_WIDTH = 60;
-    public static int PIECE_HEIGHT = 60;
+    public static int PIECE_WIDTH = 64;
+    public static int PIECE_HEIGHT = 64;
     private int rows;
     private int columns;
     private int beginX;

@@ -94,14 +94,23 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="0dp"
 	    android:layout_weight="1"
+	    android:id="@+id/game_layout"
 	    >
 	    <com.johnbear724.linkgame.view.GameView 
-	    android:layout_width="300dp"
-    	android:layout_height="420dp"
-    	android:background="#0f0"
-    	android:layout_centerInParent="true"
-    	android:id="@+id/game_view"
-	    />
+		    android:layout_width="315dp"
+	    	android:layout_height="440dp"
+	    	android:layout_centerInParent="true"
+	    	android:id="@+id/game_view"
+		    />
+	    <TextView
+	        android:layout_width="match_parent"
+    		android:layout_height="match_parent"
+    		android:textSize="30sp"
+    		android:id="@+id/startText"
+    		android:text="@string/touch_start"
+    		android:gravity="center"
+    		android:layout_centerInParent="true"
+	        />
 	</RelativeLayout>
 	
  

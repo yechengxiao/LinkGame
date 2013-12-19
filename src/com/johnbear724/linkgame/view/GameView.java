@@ -1,21 +1,34 @@
 package com.johnbear724.linkgame.view;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 
 import com.johnbear724.linkgame.core.GameService;
 import com.johnbear724.linkgame.object.Piece;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.animation.ValueAnimator;
+import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
 
-public class GameView extends View{
+public class GameView extends View implements AnimatorUpdateListener{
     
     private Piece[][] map; 
     private GameService gameService;
+    private boolean isNew;
+    private boolean isStart;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
         // TODO Auto-generated constructor stub
+        this.isNew = true;
+        this.isStart = false;
     }
 
     public void setGameService(GameService gameService) {
@@ -26,10 +39,15 @@ public class GameView extends View{
     @Override
     protected void onDraw(Canvas canvas) {
         // TODO Auto-generated method stub
+        if(!isStart) return;
         super.onDraw(canvas);
         drawMap(canvas);
     }
     
+    public void startGame() {
+        isStart = true;
+        startAnimator();
+    }
     
     private void drawMap(Canvas canvas) {
         for(int i = 0; i < gameService.getGameConfig().getRows(); i++) {
@@ -40,4 +58,25 @@ public class GameView extends View{
         }
     }
     
+    private void startAnimator() {
+        AnimatorSet aniSet = new AnimatorSet();
+        List<Animator> aniList = new ArrayList<Animator> (); 
+        int duration = 50;
+            for(int j = 0; j < gameService.getGameConfig().getColumns(); j++) {
+                ValueAnimator ani = ObjectAnimator.ofFloat(map[2][j], "y", -20, map[2][j].getY());
+                ani.setDuration(duration);
+                ani.setInterpolator(new LinearInterpolator());
+                ani.addUpdateListener(this);
+                aniList.add(ani);
+                duration += 50;
+            }
+        aniSet.playTogether(aniList);
+        aniSet.start();
+    }
+
+    @Override
+    public void onAnimationUpdate(ValueAnimator arg0) {
+        // TODO Auto-generated method stub
+        postInvalidate();
+    }
 }
