@@ -61,5 +61,5 @@ public class Piece {
     public void setSelected(boolean isSelected) {
         this.isSelected = isSelected;
     }
-    
+
 }

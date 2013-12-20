@@ -1,23 +1,16 @@
 package com.johnbear724.linkgame.view;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
 
 import com.johnbear724.linkgame.core.GameService;
 import com.johnbear724.linkgame.object.Piece;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
 
-public class GameView extends View implements AnimatorUpdateListener{
+public class GameView extends View {
     
     private Piece[][] map; 
     private GameService gameService;
@@ -52,39 +45,48 @@ public class GameView extends View implements AnimatorUpdateListener{
     private void drawMap(Canvas canvas) {
         for(int i = 0; i < gameService.getGameConfig().getRows(); i++) {
             for(int j = 0; j < gameService.getGameConfig().getColumns(); j++) {
-                if(map[i][j].getImageId() != -1)
-                canvas.drawBitmap(map[i][j].getBitmap(this.getResources()), map[i][j].getX(), map[i][j].getY(), null);
+                if(map[i][j].getImageId() != -1) {
+                    canvas.drawBitmap(map[i][j].getBitmap(this.getResources()), map[i][j].getX(), map[i][j].getY(), null);
+                }
             }
         }
     }
     
     private void startAnimator() {
-        AnimatorSet aniSet = new AnimatorSet();
-        List<Animator> aniList = new ArrayList<Animator> (); 
-        int duration = 50;
-        int distance = -50;
+        final float[][] yArray = new float[gameService.getGameConfig().getRows()][gameService.getGameConfig().getColumns()] ;
         for(int i = 0; i < gameService.getGameConfig().getRows(); i++) {
             for(int j = 0; j < gameService.getGameConfig().getColumns(); j++) {
-                ValueAnimator ani = ObjectAnimator.ofFloat(map[i][j], "y", distance, map[i][j].getY());
-                ani.setDuration(duration);
-                ani.setInterpolator(new LinearInterpolator());
-//                ani.addUpdateListener(this);
-                aniList.add(ani);
-                duration += 50;
+                yArray[i][j] = map[i][j].getY();
             }
-            distance += -100;
-        }
-        ValueAnimator updateAni = ValueAnimator.ofFloat(0, 1);
-        updateAni.addUpdateListener(this);
-        updateAni.setDuration(duration);
-        aniList.add(updateAni);
-        aniSet.playTogether(aniList);
-        aniSet.start();
+        };
+        ValueAnimator ani = ValueAnimator.ofFloat(0, 1);
+        final float distance = 70;
+        final float difference =  yArray[0][0] + distance * gameService.getGameConfig().getRows() * gameService.getGameConfig().getColumns();
+        ani.addUpdateListener(new AnimatorUpdateListener() {
+            
+            @Override
+            public void onAnimationUpdate(ValueAnimator arg0) {
+                // TODO Auto-generated method stub
+                float beginY = -distance * gameService.getGameConfig().getRows() * gameService.getGameConfig().getColumns() + difference * (Float)arg0.getAnimatedValue();
+                int index = 0;
+                for(int i = 0; i < gameService.getGameConfig().getRows(); i++) {
+                    for(int j = 0; j < gameService.getGameConfig().getColumns(); j++) {
+                        if(map[i][j].getImageId() != -1) {
+                            float location = beginY + distance * index;
+                            if(location >= yArray[i][j]) {
+                                location = yArray[i][j];
+                            }
+                            map[i][j].setY(location);
+                        }
+                        index ++;
+                    }
+                }
+                postInvalidate();
+            }
+        });
+        ani.setFrameDelay(50);
+        ani.setDuration(1000);
+        ani.start();
     }
 
-    @Override
-    public void onAnimationUpdate(ValueAnimator arg0) {
-        // TODO Auto-generated method stub
-        postInvalidate();
-    }
 }
