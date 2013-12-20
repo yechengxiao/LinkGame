@@ -60,7 +60,7 @@ public class GameView extends View {
             }
         };
         ValueAnimator ani = ValueAnimator.ofFloat(0, 1);
-        final float distance = 70;
+        final float distance = 64;
         final float difference =  yArray[0][0] + distance * gameService.getGameConfig().getRows() * gameService.getGameConfig().getColumns();
         ani.addUpdateListener(new AnimatorUpdateListener() {
             
