@@ -62,14 +62,22 @@ public class GameView extends View implements AnimatorUpdateListener{
         AnimatorSet aniSet = new AnimatorSet();
         List<Animator> aniList = new ArrayList<Animator> (); 
         int duration = 50;
+        int distance = -50;
+        for(int i = 0; i < gameService.getGameConfig().getRows(); i++) {
             for(int j = 0; j < gameService.getGameConfig().getColumns(); j++) {
-                ValueAnimator ani = ObjectAnimator.ofFloat(map[2][j], "y", -20, map[2][j].getY());
+                ValueAnimator ani = ObjectAnimator.ofFloat(map[i][j], "y", distance, map[i][j].getY());
                 ani.setDuration(duration);
                 ani.setInterpolator(new LinearInterpolator());
-                ani.addUpdateListener(this);
+//                ani.addUpdateListener(this);
                 aniList.add(ani);
                 duration += 50;
             }
+            distance += -100;
+        }
+        ValueAnimator updateAni = ValueAnimator.ofFloat(0, 1);
+        updateAni.addUpdateListener(this);
+        updateAni.setDuration(duration);
+        aniList.add(updateAni);
         aniSet.playTogether(aniList);
         aniSet.start();
     }
