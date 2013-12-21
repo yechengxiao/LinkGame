@@ -33,8 +33,8 @@ public class GameService {
             x = gameConfig.getBeginX();
             for(int j = 0; j < gameConfig.getColumns(); j++) {
 //                Log.e("createMap", "" + location);
-                Piece piece = new Piece(x, y, mapList.get(location++));
-//                Piece piece = new Piece(i, j, 3);ac
+                Piece piece = new Piece(x, y, mapList.get(location++), gameConfig.getContext().getResources());
+//                Piece piece = new Piece(i, j, 3);
                 newMap[i][j] = piece;
                 x += gameConfig.PIECE_WIDTH;
             }

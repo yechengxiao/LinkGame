@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -63,7 +64,7 @@ public class GameView extends View {
         for(int i = 0; i < gameService.getGameConfig().getRows(); i++) {
             for(int j = 0; j < gameService.getGameConfig().getColumns(); j++) {
                 if(map[i][j].getImageId() != -1) {
-                    canvas.drawBitmap(map[i][j].getBitmap(this.getResources()), map[i][j].getX(), map[i][j].getY(), null);
+                    canvas.drawBitmap(map[i][j].getBitmap(), map[i][j].getX(), map[i][j].getY(), null);
                 }
             }
         }
@@ -86,8 +87,13 @@ public class GameView extends View {
                 // TODO Auto-generated method stub
                 float beginY = -distance * gameService.getGameConfig().getRows() * gameService.getGameConfig().getColumns() + difference * (Float)arg0.getAnimatedValue();
                 int index = 0;
+                boolean reverse = false;
                 for(int i = 0; i < gameService.getGameConfig().getRows(); i++) {
                     for(int j = 0; j < gameService.getGameConfig().getColumns(); j++) {
+                        int temp = j;
+                        if(reverse) {
+                            j = gameService.getGameConfig().getColumns() - j - 1;
+                        }
                         if(map[i][j].getImageId() != -1) {
                             float location = beginY + distance * index;
                             if(location >= yArray[i][j]) {
@@ -96,7 +102,9 @@ public class GameView extends View {
                             map[i][j].setY(location);
                         }
                         index ++;
+                        j = temp;
                     }
+                    reverse = !reverse;
                 }
                 postInvalidate();
             }

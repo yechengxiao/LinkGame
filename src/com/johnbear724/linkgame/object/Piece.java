@@ -13,21 +13,23 @@ public class Piece {
     private float y;
     //imageId为-1则为空，大于等于0则为对应的位图
     private int imageId;
+    private Bitmap bitmap;
     private boolean isSelected;
     
-    public Piece(int x, int y, int imageId) {
+    public Piece(int x, int y, int imageId, Resources r) {
         // TODO Auto-generated constructor stub
         this.x = x;
         this.y= y;
         this.imageId = imageId;
+        if(imageId != -1) {
+            bitmap = BitmapFactory.decodeResource(r, ImageUtil.getImageValues().get(imageId));
+        } else {
+            bitmap = null;
+        }
     }
     
-    public Bitmap getBitmap(Resources r) {
-        if(imageId != -1) {
-            return BitmapFactory.decodeResource(r, ImageUtil.getImageValues().get(imageId));
-        } else {
-            return null;
-        }
+    public Bitmap getBitmap() {
+        return bitmap;
     }
 
     public float getX() {
@@ -50,8 +52,13 @@ public class Piece {
         return imageId;
     }
 
-    public void setImageId(int imageId) {
+    public void setImage(int imageId, Resources r) {
         this.imageId = imageId;
+        if(imageId != -1) {
+            bitmap = BitmapFactory.decodeResource(r, ImageUtil.getImageValues().get(imageId));
+        } else {
+            bitmap = null;
+        }
     }
 
     public boolean isSelected() {
