@@ -14,7 +14,6 @@ public class Piece {
     //imageId为-1则为空，大于等于0则为对应的位图
     private int imageId;
     private Bitmap bitmap;
-    private boolean isSelected;
     
     public Piece(int x, int y, int imageId, Resources r) {
         // TODO Auto-generated constructor stub
@@ -60,13 +59,5 @@ public class Piece {
             bitmap = null;
         }
     }
-
-    public boolean isSelected() {
-        return isSelected;
-    }
-
-    public void setSelected(boolean isSelected) {
-        this.isSelected = isSelected;
-    }
-
+    
 }

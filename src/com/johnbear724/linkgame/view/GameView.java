@@ -1,16 +1,23 @@
 package com.johnbear724.linkgame.view;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.johnbear724.linkgame.R;
+import com.johnbear724.linkgame.animation.AnimationPiece;
+import com.johnbear724.linkgame.animation.RemoveAnimationPiece;
 import com.johnbear724.linkgame.core.GameService;
 import com.johnbear724.linkgame.object.Piece;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.Animator.AnimatorListener;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
 
@@ -20,11 +27,15 @@ public class GameView extends View {
     private Piece selectedPiece;
     private GameService gameService;
     private boolean isStart;
+    private Bitmap selector;
+    private List<AnimationPiece> aniList = new ArrayList<AnimationPiece> ();
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
         // TODO Auto-generated constructor stub
         this.isStart = false;
+        this.selector = BitmapFactory.decodeResource(this.getResources(), R.drawable.selector);
+        this.selectedPiece = null;
     }
 
     @Override
@@ -34,7 +45,12 @@ public class GameView extends View {
         super.onDraw(canvas);
         drawMap(canvas);
         if(selectedPiece != null) {
-            canvas.drawBitmap(BitmapFactory.decodeResource(this.getResources(), R.drawable.selector), selectedPiece.getX(), selectedPiece.getY(), null);
+            canvas.drawBitmap(selector, selectedPiece.getX(), selectedPiece.getY(), null);
+        }
+        if(!aniList.isEmpty()) {
+            for(AnimationPiece aniPiece : aniList) {
+                canvas.drawBitmap(aniPiece.getBitmap(), aniPiece.getMatrix(), aniPiece.getPaint());
+            }
         }
     }
     
@@ -44,8 +60,18 @@ public class GameView extends View {
         if(event.getAction() != MotionEvent.ACTION_DOWN && event.getAction() != MotionEvent.ACTION_MOVE) {
             return false;
         }
-        selectedPiece = gameService.checkSelected(event.getX(), event.getY());
-        selectedPiece.setSelected(!selectedPiece.isSelected());
+        Piece compared = gameService.checkSelected(event.getX(), event.getY());
+        if(compared.getImageId() == -1 || compared == selectedPiece) {
+            return true;
+        }
+        if(selectedPiece == null || compared.getImageId() != selectedPiece.getImageId()) {
+            selectedPiece = compared;
+        } else {
+            linkUpAnimation(selectedPiece, compared);
+            selectedPiece.setImage(-1, getResources());
+            compared.setImage(-1, getResources());
+            selectedPiece = null;
+        }
         postInvalidate();
         return true;
     }
@@ -113,4 +139,55 @@ public class GameView extends View {
         ani.start();
     }
 
+    public void linkUpAnimation(Piece one, Piece two) {
+        final RemoveAnimationPiece removeAP1 = new RemoveAnimationPiece(one);
+        final RemoveAnimationPiece removeAP2 = new RemoveAnimationPiece(two);
+        aniList.add(removeAP1);
+        aniList.add(removeAP2);
+        ValueAnimator ani = ValueAnimator.ofFloat(0, 1);
+        ani.addUpdateListener(new AnimatorUpdateListener() {
+            
+            @Override
+            public void onAnimationUpdate(ValueAnimator arg0) {
+                // TODO Auto-generated method stub
+                float currentValue = (Float)arg0.getAnimatedValue();
+                float currentScale = 1 + currentValue * 1;
+                removeAP1.setScale(currentScale, currentScale);
+                removeAP2.setScale(currentScale, currentScale);
+                int currentAlpha = (int) (255 - currentValue * 255);
+                removeAP1.setAlpha(currentAlpha);
+                removeAP2.setAlpha(currentAlpha);
+                postInvalidate();
+            }
+        });
+        ani.addListener(new AnimatorListener() {
+            
+            @Override
+            public void onAnimationStart(Animator arg0) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public void onAnimationRepeat(Animator arg0) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public void onAnimationEnd(Animator arg0) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public void onAnimationCancel(Animator arg0) {
+                // TODO Auto-generated method stub
+                aniList.remove(removeAP1);
+                aniList.remove(removeAP2);
+            }
+        });
+        ani.setDuration(500);
+        ani.start();
+    }
 }
