@@ -2,6 +2,8 @@ package com.johnbear724.linkgame.core;
 
 import java.util.List;
 
+import android.util.Log;
+
 import com.johnbear724.linkgame.object.Map;
 import com.johnbear724.linkgame.object.Piece;
 import com.johnbear724.linkgame.util.ImageUtil;
@@ -41,6 +43,16 @@ public class GameService {
         
         this.map = newMap;
         return this.map;
+    }
+    
+    public Piece checkSelected(float x, float y) {
+        int selectedColumn = (int) ((x - gameConfig.getBeginX()) / gameConfig.PIECE_WIDTH);    
+        int selectedRow = (int) ((y - gameConfig.getBeginY()) / gameConfig.PIECE_HEIGHT);    
+        selectedColumn = selectedColumn < 0 ? 0 : selectedColumn;
+        selectedColumn = selectedColumn > (gameConfig.getColumns() - 1) ? (gameConfig.getColumns() - 1) : selectedColumn;
+        selectedRow = selectedRow < 0 ? 0 : selectedRow;
+        selectedRow = selectedRow > (gameConfig.getRows() - 1) ? (gameConfig.getRows() - 1) : selectedRow;
+        return map[selectedRow][selectedColumn];
     }
     
     public GameConfig getGameConfig() {

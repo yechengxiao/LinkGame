@@ -1,10 +1,13 @@
 package com.johnbear724.linkgame.view;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
+import com.johnbear724.linkgame.R;
 import com.johnbear724.linkgame.core.GameService;
 import com.johnbear724.linkgame.object.Piece;
 import com.nineoldandroids.animation.ValueAnimator;
@@ -13,28 +16,42 @@ import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
 public class GameView extends View {
     
     private Piece[][] map; 
+    private Piece selectedPiece;
     private GameService gameService;
-    private boolean isNew;
     private boolean isStart;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
         // TODO Auto-generated constructor stub
-        this.isNew = true;
         this.isStart = false;
     }
 
-    public void setGameService(GameService gameService) {
-        this.gameService = gameService;
-        this.map = gameService.getMap();
-    }
-    
     @Override
     protected void onDraw(Canvas canvas) {
         // TODO Auto-generated method stub
         if(!isStart) return;
         super.onDraw(canvas);
         drawMap(canvas);
+        if(selectedPiece != null) {
+            canvas.drawBitmap(BitmapFactory.decodeResource(this.getResources(), R.drawable.selector), selectedPiece.getX(), selectedPiece.getY(), null);
+        }
+    }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        // TODO Auto-generated method stub
+        if(event.getAction() != MotionEvent.ACTION_DOWN && event.getAction() != MotionEvent.ACTION_MOVE) {
+            return false;
+        }
+        selectedPiece = gameService.checkSelected(event.getX(), event.getY());
+        selectedPiece.setSelected(!selectedPiece.isSelected());
+        postInvalidate();
+        return true;
+    }
+    
+    public void setGameService(GameService gameService) {
+        this.gameService = gameService;
+        this.map = gameService.getMap();
     }
     
     public void startGame() {
@@ -84,7 +101,6 @@ public class GameView extends View {
                 postInvalidate();
             }
         });
-        ani.setFrameDelay(50);
         ani.setDuration(1000);
         ani.start();
     }
