@@ -49,7 +49,7 @@ public class GameView extends View {
         }
         if(!aniList.isEmpty()) {
             for(AnimationPiece aniPiece : aniList) {
-                canvas.drawBitmap(aniPiece.getBitmap(), aniPiece.getMatrix(), aniPiece.getPaint());
+                aniPiece.drawAnimation(canvas);
             }
         }
     }
