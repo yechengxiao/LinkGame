@@ -6,6 +6,7 @@ public class GameConfig {
     
     public static int PIECE_WIDTH = 64;
     public static int PIECE_HEIGHT = 64;
+    public static boolean OUTER_LINK = false;
     private int rows;
     private int columns;
     private int beginX;

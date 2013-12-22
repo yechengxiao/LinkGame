@@ -14,11 +14,15 @@ public class Piece {
     //imageId为-1则为空，大于等于0则为对应的位图
     private int imageId;
     private Bitmap bitmap;
+    private int columnNum;;
+    private int rowNum;
     
-    public Piece(int x, int y, int imageId, Resources r) {
+    public Piece(int x, int y, int rowNum, int columnNum, int imageId, Resources r) {
         // TODO Auto-generated constructor stub
         this.x = x;
         this.y= y;
+        this.rowNum = rowNum;
+        this.columnNum = columnNum;
         this.imageId = imageId;
         if(imageId != -1) {
             bitmap = BitmapFactory.decodeResource(r, ImageUtil.getImageValues().get(imageId));
@@ -58,6 +62,14 @@ public class Piece {
         } else {
             bitmap = null;
         }
+    }
+    
+    public int getRowNum() {
+        return rowNum;
+    }
+    
+    public int getColumnNum() {
+        return columnNum;
     }
     
 }
