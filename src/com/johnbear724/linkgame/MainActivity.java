@@ -36,8 +36,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                gameLaytou.removeView(startText);
                 gameView.startGame();
+                gameLaytou.removeView(startText);
             }
         });
     }

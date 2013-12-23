@@ -12,6 +12,7 @@ public class LinkInfo {
     
     private List<Point> pointList = new ArrayList<Point> ();
     
+    
     public LinkInfo(Point begin, Point p1, Point p2, Point end) {
         // TODO Auto-generated constructor stub
         if(begin.equals(p1)) {
@@ -33,16 +34,11 @@ public class LinkInfo {
     }
     
     public List<Point> getLocationPoint(Piece[][] map) {
-        if(GameConfig.OUTER_LINK) {
-            
-        } else {
-            
-        }
-        
         List<Point> pList = new ArrayList<Point> ();
         for(Point p : pointList) {
             pList.add( new Point((int)map[p.x][p.y].getX() + GameConfig.PIECE_WIDTH / 2 , (int)map[p.x][p.y].getY() + GameConfig.PIECE_HEIGHT / 2));
         }
         return pList; 
     }
+    
 }

@@ -17,7 +17,7 @@ public class Piece {
     private int columnNum;;
     private int rowNum;
     
-    public Piece(int x, int y, int rowNum, int columnNum, int imageId, Resources r) {
+    public Piece(float x, float y, int rowNum, int columnNum, int imageId, Resources r) {
         // TODO Auto-generated constructor stub
         this.x = x;
         this.y= y;

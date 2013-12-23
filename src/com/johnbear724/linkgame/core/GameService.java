@@ -54,7 +54,7 @@ public class GameService {
         return map[selectedRow][selectedColumn];
     }
     
-    public LinkInfo checkLinkUp(int oneRow, int oneColumn, int twoRow, int twoColumn) {
+    public List<Point> checkLinkUp(int oneRow, int oneColumn, int twoRow, int twoColumn) {
         Piece[][] linkMap;
         if(GameConfig.OUTER_LINK) {
             oneRow++;
@@ -103,7 +103,7 @@ public class GameService {
         }
         
         if(linkUpList.size() != 0) {
-            return linkUpList.valueAt(0);
+            return linkUpList.valueAt(0).getLocationPoint(linkMap);
         } else {
             return null;
         }
@@ -170,22 +170,27 @@ public class GameService {
     }
     
     public Piece[][] getOuterMap(Piece[][] pieces) {
+        int indent = 35;
         Piece[][] outerMap = new Piece[pieces.length + 2][pieces[0].length + 2];
-        for(int i = 0; i < outerMap[0].length; i++) {
-            outerMap[0][i] = new Piece(0, 0, 0, i, -1, null);
+        outerMap[0][0] = new Piece(gameConfig.getBeginX() - GameConfig.PIECE_WIDTH + 0 * GameConfig.PIECE_WIDTH + indent, gameConfig.getBeginY() - GameConfig.PIECE_HEIGHT + indent, 0, 0, -1, null);
+        for(int i = 1; i < (outerMap[0].length - 1); i++) {
+            outerMap[0][i] = new Piece(gameConfig.getBeginX() - GameConfig.PIECE_WIDTH + i * GameConfig.PIECE_WIDTH, gameConfig.getBeginY() - GameConfig.PIECE_HEIGHT + indent, 0, i, -1, null);
         }
+        outerMap[0][outerMap[0].length - 1] = new Piece(gameConfig.getBeginX() - GameConfig.PIECE_WIDTH + (outerMap[0].length - 1) * GameConfig.PIECE_WIDTH - indent, gameConfig.getBeginY() - GameConfig.PIECE_HEIGHT + indent, 0, outerMap[0].length - 1, -1, null);
+        int mapI = 0;
         for(int i = 1; i < (outerMap.length - 1); i++) {
-            outerMap[i][0] = new Piece(0, 0, i, 0, -1, null);
-            int mapI = 0;
+            outerMap[i][0] = new Piece(gameConfig.getBeginX() - GameConfig.PIECE_WIDTH + indent, map[mapI][0].getY(), i, 0, -1, null);
             for(int j = 0; j < pieces[0].length; j++) {
                 outerMap[i][j + 1] = pieces[mapI][j];
             }
-            outerMap[i][outerMap[0].length - 1] = new Piece(0, 0, i, outerMap[0].length - 1, -1, null);
+            outerMap[i][outerMap[0].length - 1] = new Piece(map[mapI][map[mapI].length - 1].getX() + GameConfig.PIECE_WIDTH - indent, map[mapI][0].getY(), i, outerMap[0].length - 1, -1, null);
             mapI++;
         }
-        for(int i = 0; i < outerMap[0].length; i++) {
-            outerMap[outerMap.length - 1][i] = new Piece(0, 0, outerMap.length - 1, i, -1, null);
+        outerMap[outerMap.length - 1][0] = new Piece(gameConfig.getBeginX() - GameConfig.PIECE_WIDTH + 0 * GameConfig.PIECE_WIDTH + indent, map[map.length - 1][0].getY() + GameConfig.PIECE_HEIGHT - indent, outerMap.length - 1, 0, -1, null);
+        for(int i = 1; i < (outerMap[0].length - 1); i++) {
+            outerMap[outerMap.length - 1][i] = new Piece(gameConfig.getBeginX() - GameConfig.PIECE_WIDTH + i * GameConfig.PIECE_WIDTH, map[map.length - 1][0].getY() + GameConfig.PIECE_HEIGHT - indent, outerMap.length - 1, i, -1, null);
         }
+        outerMap[outerMap.length - 1][outerMap[0].length - 1] = new Piece(gameConfig.getBeginX() - GameConfig.PIECE_WIDTH + (outerMap[0].length - 1) * GameConfig.PIECE_WIDTH - indent, map[map.length - 1][0].getY() + GameConfig.PIECE_HEIGHT - indent, outerMap.length - 1, (outerMap[0].length - 1), -1, null);
         return outerMap; 
     }
     

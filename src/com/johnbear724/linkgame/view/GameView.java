@@ -17,7 +17,6 @@ import com.johnbear724.linkgame.animation.AnimationPiece;
 import com.johnbear724.linkgame.animation.LinkUpAnimation;
 import com.johnbear724.linkgame.animation.RemoveAnimationPiece;
 import com.johnbear724.linkgame.core.GameService;
-import com.johnbear724.linkgame.object.LinkInfo;
 import com.johnbear724.linkgame.object.Piece;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
@@ -70,9 +69,9 @@ public class GameView extends View {
         if(selectedPiece == null || compared.getImageId() != selectedPiece.getImageId()) {
             selectedPiece = compared;
         } else {
-            LinkInfo linkInfo = gameService.checkLinkUp(compared.getRowNum(), compared.getColumnNum(), selectedPiece.getRowNum(), selectedPiece.getColumnNum());
-            if(linkInfo != null) {
-                linkUpAnimation(selectedPiece, compared, linkInfo.getLocationPoint(map));
+            List<Point> pList = gameService.checkLinkUp(compared.getRowNum(), compared.getColumnNum(), selectedPiece.getRowNum(), selectedPiece.getColumnNum());
+            if(pList != null) {
+                linkUpAnimation(selectedPiece, compared, pList);
                 selectedPiece.setImage(-1, getResources());
                 compared.setImage(-1, getResources());
                 selectedPiece = null;
