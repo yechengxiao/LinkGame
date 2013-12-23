@@ -5,32 +5,44 @@ import java.util.List;
 
 import android.graphics.Point;
 
+import com.johnbear724.linkgame.core.GameConfig;
+
+
 public class LinkInfo {
     
     private List<Point> pointList = new ArrayList<Point> ();
     
-    public LinkInfo(Point one, Point two, Point three, Point four) {
+    public LinkInfo(Point begin, Point p1, Point p2, Point end) {
         // TODO Auto-generated constructor stub
-        pointList.add(one);
-        pointList.add(two);
-        pointList.add(three);
-        pointList.add(four);
+        if(begin.equals(p1)) {
+            pointList.add(begin);
+        } else {
+            pointList.add(begin);
+            pointList.add(p1);
+        }
+        if(p2.equals(end)) {
+            pointList.add(end);
+        } else {
+            pointList.add(p2);
+            pointList.add(end);
+        }
     }
     
-    public LinkInfo(Point one, Point two, Point three) {
-        // TODO Auto-generated constructor stub
-        pointList.add(one);
-        pointList.add(two);
-        pointList.add(three);
+    public int getSize() {
+        return pointList.size();
     }
     
-    public LinkInfo(Point one, Point two) {
-        // TODO Auto-generated constructor stub
-        pointList.add(one);
-        pointList.add(two);
-    }
-    
-    public List<Point> getPoint() {
-        return pointList;
+    public List<Point> getLocationPoint(Piece[][] map) {
+        if(GameConfig.OUTER_LINK) {
+            
+        } else {
+            
+        }
+        
+        List<Point> pList = new ArrayList<Point> ();
+        for(Point p : pointList) {
+            pList.add( new Point((int)map[p.x][p.y].getX() + GameConfig.PIECE_WIDTH / 2 , (int)map[p.x][p.y].getY() + GameConfig.PIECE_HEIGHT / 2));
+        }
+        return pList; 
     }
 }

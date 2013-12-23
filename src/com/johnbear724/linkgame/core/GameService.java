@@ -3,6 +3,9 @@ package com.johnbear724.linkgame.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.graphics.Point;
+import android.util.SparseArray;
+
 import com.johnbear724.linkgame.object.LinkInfo;
 import com.johnbear724.linkgame.object.Map;
 import com.johnbear724.linkgame.object.Piece;
@@ -32,9 +35,9 @@ public class GameService {
             for(int j = 0; j < gameConfig.getColumns(); j++) {
                 Piece piece = new Piece(x, y, i, j, mapList.get(location++), gameConfig.getContext().getResources());
                 newMap[i][j] = piece;
-                x += gameConfig.PIECE_WIDTH;
+                x += GameConfig.PIECE_WIDTH;
             }
-            y += gameConfig.PIECE_HEIGHT;
+            y += GameConfig.PIECE_HEIGHT;
         }
         
         this.map = newMap;
@@ -42,8 +45,8 @@ public class GameService {
     }
     
     public Piece checkSelected(float x, float y) {
-        int selectedColumn = (int) ((x - gameConfig.getBeginX()) / gameConfig.PIECE_WIDTH);    
-        int selectedRow = (int) ((y - gameConfig.getBeginY()) / gameConfig.PIECE_HEIGHT);    
+        int selectedColumn = (int) ((x - gameConfig.getBeginX()) / GameConfig.PIECE_WIDTH);    
+        int selectedRow = (int) ((y - gameConfig.getBeginY()) / GameConfig.PIECE_HEIGHT);    
         selectedColumn = selectedColumn < 0 ? 0 : selectedColumn;
         selectedColumn = selectedColumn > (gameConfig.getColumns() - 1) ? (gameConfig.getColumns() - 1) : selectedColumn;
         selectedRow = selectedRow < 0 ? 0 : selectedRow;
@@ -63,7 +66,47 @@ public class GameService {
             linkMap = map;
         }
         
-        return null;
+        SparseArray<LinkInfo> linkUpList = new SparseArray<LinkInfo>();
+        
+        List<Integer> oneHRange = horizontalRange(oneRow, oneColumn, linkMap);
+        List<Integer> twoHRange = horizontalRange(twoRow, twoColumn, linkMap);
+        List<Integer> sameHList = new ArrayList<Integer> ();
+        for(int i : oneHRange) {
+            if(twoHRange.contains(i)) {
+                sameHList.add(i);
+            }
+        }
+        if(!sameHList.isEmpty()) {
+            for(int i : sameHList) {
+                if(isLinkUp(oneRow, i, twoRow, i, linkMap)) {
+                    LinkInfo ll = new LinkInfo(new Point(oneRow, oneColumn), new Point(oneRow, i), new Point(twoRow, i), new Point(twoRow, twoColumn));
+                    linkUpList.put(ll.getSize(), ll);
+                }
+            }
+        }
+        
+        List<Integer> oneVRange = verticalRange(oneRow, oneColumn, linkMap);
+        List<Integer> twoVRange = verticalRange(twoRow, twoColumn, linkMap);
+        List<Integer> sameVList = new ArrayList<Integer> ();
+        for(int i : oneVRange) {
+            if(twoVRange.contains(i)) {
+                sameVList.add(i);
+            }
+        }
+        if(!sameVList.isEmpty()) {
+            for(int i : sameVList) {
+                if(isLinkUp(i, oneColumn, i, twoColumn, linkMap)) {
+                    LinkInfo ll = new LinkInfo(new Point(oneRow, oneColumn), new Point(i, oneColumn), new Point(i, twoColumn), new Point(twoRow, twoColumn));
+                    linkUpList.put(ll.getSize(), ll);
+                }
+            }
+        }
+        
+        if(linkUpList.size() != 0) {
+            return linkUpList.valueAt(0);
+        } else {
+            return null;
+        }
     }
     
     public List<Integer> horizontalRange (int row, int column, Piece[][] pieces) {
@@ -104,24 +147,22 @@ public class GameService {
             for(int i = 0; i < pieces[0].length; i++) {
                 if(i == oneColumn || i == twoColumn) {
                     status ++;
+                } else if(status == 1 && pieces[oneRow][i].getImageId() != -1) {
+                    return false;
                 }
                 if(status == 2) {
                     return true;
                 } 
-                if(status == 1 && pieces[oneRow][i].getImageId() != -1) {
-                    return false;
-                }
             }
         } else if(oneColumn == twoColumn) {
             for(int i = 0; i < pieces.length; i++) {
                 if(i == oneRow || i == twoRow) {
                     status++;
+                } else if(status == 1 && pieces[i][oneColumn].getImageId() != -1) {
+                    return false;
                 }
                 if(status == 2) {
                     return true;
-                }
-                if(status == 1 && pieces[i][oneColumn].getImageId() != -1) {
-                    return false;
                 }
             }
         }

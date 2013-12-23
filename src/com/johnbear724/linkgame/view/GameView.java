@@ -7,14 +7,17 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.johnbear724.linkgame.R;
 import com.johnbear724.linkgame.animation.AnimationPiece;
+import com.johnbear724.linkgame.animation.LinkUpAnimation;
 import com.johnbear724.linkgame.animation.RemoveAnimationPiece;
 import com.johnbear724.linkgame.core.GameService;
+import com.johnbear724.linkgame.object.LinkInfo;
 import com.johnbear724.linkgame.object.Piece;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
@@ -67,10 +70,15 @@ public class GameView extends View {
         if(selectedPiece == null || compared.getImageId() != selectedPiece.getImageId()) {
             selectedPiece = compared;
         } else {
-            linkUpAnimation(selectedPiece, compared);
-            selectedPiece.setImage(-1, getResources());
-            compared.setImage(-1, getResources());
-            selectedPiece = null;
+            LinkInfo linkInfo = gameService.checkLinkUp(compared.getRowNum(), compared.getColumnNum(), selectedPiece.getRowNum(), selectedPiece.getColumnNum());
+            if(linkInfo != null) {
+                linkUpAnimation(selectedPiece, compared, linkInfo.getLocationPoint(map));
+                selectedPiece.setImage(-1, getResources());
+                compared.setImage(-1, getResources());
+                selectedPiece = null;
+            } else {
+                selectedPiece = compared;
+            }
         }
         postInvalidate();
         return true;
@@ -139,11 +147,13 @@ public class GameView extends View {
         ani.start();
     }
 
-    public void linkUpAnimation(Piece one, Piece two) {
+    public void linkUpAnimation(Piece one, Piece two, List<Point> pList) {
         final RemoveAnimationPiece removeAP1 = new RemoveAnimationPiece(one);
         final RemoveAnimationPiece removeAP2 = new RemoveAnimationPiece(two);
+        final LinkUpAnimation linkUpAni = new LinkUpAnimation(pList);
         aniList.add(removeAP1);
         aniList.add(removeAP2);
+        aniList.add(linkUpAni);
         ValueAnimator ani = ValueAnimator.ofFloat(0, 1);
         ani.addUpdateListener(new AnimatorUpdateListener() {
             
@@ -177,17 +187,18 @@ public class GameView extends View {
             @Override
             public void onAnimationEnd(Animator arg0) {
                 // TODO Auto-generated method stub
-                
+                aniList.remove(removeAP1);
+                aniList.remove(removeAP2);
+                aniList.remove(linkUpAni);
             }
             
             @Override
             public void onAnimationCancel(Animator arg0) {
                 // TODO Auto-generated method stub
-                aniList.remove(removeAP1);
-                aniList.remove(removeAP2);
             }
         });
         ani.setDuration(500);
         ani.start();
     }
+    
 }
