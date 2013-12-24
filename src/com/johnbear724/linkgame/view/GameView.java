@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,9 +29,10 @@ public class GameView extends View {
     private Piece[][] map; 
     private Piece selectedPiece;
     private GameService gameService;
-    private boolean isStart;
     private Bitmap selector;
     private List<AnimationPiece> aniList = new ArrayList<AnimationPiece> ();
+    private Handler handler;
+    private boolean isStart;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -88,8 +90,15 @@ public class GameView extends View {
         this.map = gameService.getMap();
     }
     
-    public void startGame() {
+    public void startGame(Handler handler) {
         isStart = true;
+        this.handler = handler;
+        startAnimator();
+    }
+    
+    public void newGame() {
+        map = gameService.createMap();
+        selectedPiece = null;
         startAnimator();
     }
     
@@ -104,6 +113,7 @@ public class GameView extends View {
     }
     
     private void startAnimator() {
+        //FIXME 当该动画还没有结束时再此调用该动画会造成冲突
         final float[][] yArray = new float[gameService.getGameConfig().getRows()][gameService.getGameConfig().getColumns()] ;
         for(int i = 0; i < gameService.getGameConfig().getRows(); i++) {
             for(int j = 0; j < gameService.getGameConfig().getColumns(); j++) {
@@ -189,6 +199,9 @@ public class GameView extends View {
                 aniList.remove(removeAP1);
                 aniList.remove(removeAP2);
                 aniList.remove(linkUpAni);
+                if(gameService.isEmpty()) {
+                    handler.sendEmptyMessage(0x123);
+                }
             }
             
             @Override
@@ -198,6 +211,10 @@ public class GameView extends View {
         });
         ani.setDuration(500);
         ani.start();
+    }
+    
+    public boolean isStart() {
+        return isStart;
     }
     
 }

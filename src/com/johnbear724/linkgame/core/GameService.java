@@ -80,7 +80,9 @@ public class GameService {
             for(int i : sameHList) {
                 if(isLinkUp(oneRow, i, twoRow, i, linkMap)) {
                     LinkInfo ll = new LinkInfo(new Point(oneRow, oneColumn), new Point(oneRow, i), new Point(twoRow, i), new Point(twoRow, twoColumn));
-                    linkUpList.put(ll.getSize(), ll);
+                    if(linkUpList.keyAt(ll.getSize()) == 0) {
+                        linkUpList.put(ll.getSize(), ll);
+                    }
                 }
             }
         }
@@ -97,7 +99,9 @@ public class GameService {
             for(int i : sameVList) {
                 if(isLinkUp(i, oneColumn, i, twoColumn, linkMap)) {
                     LinkInfo ll = new LinkInfo(new Point(oneRow, oneColumn), new Point(i, oneColumn), new Point(i, twoColumn), new Point(twoRow, twoColumn));
-                    linkUpList.put(ll.getSize(), ll);
+                    if(linkUpList.keyAt(ll.getSize()) == 0) {
+                        linkUpList.put(ll.getSize(), ll);
+                    }
                 }
             }
         }
@@ -192,6 +196,17 @@ public class GameService {
         }
         outerMap[outerMap.length - 1][outerMap[0].length - 1] = new Piece(gameConfig.getBeginX() - GameConfig.PIECE_WIDTH + (outerMap[0].length - 1) * GameConfig.PIECE_WIDTH - indent, map[map.length - 1][0].getY() + GameConfig.PIECE_HEIGHT - indent, outerMap.length - 1, (outerMap[0].length - 1), -1, null);
         return outerMap; 
+    }
+    
+    public boolean isEmpty() {
+        for(int i = 0; i < map.length; i++) {
+            for(int j = 0; j < map[0].length; j++) {
+                if(map[i][j].getImageId() != -1) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     
     public GameConfig getGameConfig() {

@@ -1,12 +1,20 @@
 package com.johnbear724.linkgame;
 
+
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.RelativeLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.johnbear724.linkgame.core.GameConfig;
@@ -15,20 +23,74 @@ import com.johnbear724.linkgame.view.GameView;
 
 public class MainActivity extends Activity {
 
-    private GameService gameService; 
     private GameView gameView;
-    private RelativeLayout gameLaytou;
+    private ProgressBar progressBar;
+    private TextView timeText;
+    private GameService gameService; 
+    private Handler handler;
+    private Timer timer = new Timer();
+    private int time;
+    
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
+        init();
+    }
+    
+    @Override
+    protected void onResume() {
+        // TODO Auto-generated method stub
+        if(time != 0) {
+            startTimer(time);
+        }
+        super.onResume();
+    }
+    
+    @Override
+    protected void onPause() {
+        // TODO Auto-generated method stub
+        if(timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        super.onPause();
+    }
+    
+    public void init() {
         gameView = (GameView) findViewById(R.id.game_view);
-        gameLaytou = (RelativeLayout) findViewById(R.id.game_layout); 
-        gameService = new GameService(new GameConfig(10, 7, 20, 20, this));
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        timeText = (TextView) findViewById(R.id.time_text);
         
+        gameService = new GameService(new GameConfig(10, 7, 20, 20, this));
         gameView.setGameService(gameService);
+        timer = new Timer();
+        handler = new Handler() {
+            public void handleMessage(android.os.Message msg) {
+                switch(msg.what) {
+                case GameConfig.WIN_GAME :
+                    new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("胜利")
+                        .setMessage("哈哈哈哈啊哈哈！！！")
+                        .setPositiveButton("88", null)
+                        .setNegativeButton("哈罗", null)
+                        .create().show();
+                    break;
+                case GameConfig.TIMER :
+                    time--;
+                    if(time == 0) {
+                        setTimer(time);
+                        timer.cancel();
+                        timer = null;
+                        showTimeOver();
+                    } else {
+                        setTimer(time);
+                    }
+                }
+                    
+            };
+        };
         
         final TextView startText = (TextView) findViewById(R.id.startText);
         startText.setOnClickListener(new OnClickListener() {
@@ -36,8 +98,10 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                gameView.startGame();
-                gameLaytou.removeView(startText);
+                //FIXME 有时调用之后gameView不绘制，触摸也没反应
+                startTimer(100);
+                gameView.startGame(handler);
+                startText.setVisibility(View.INVISIBLE);;
             }
         });
     }
@@ -52,6 +116,76 @@ public class MainActivity extends Activity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // TODO Auto-generated method stub
+        if(keyCode == KeyEvent.KEYCODE_BACK) {
+            if(gameView.isStart()) {
+                new AlertDialog.Builder(MainActivity.this)
+                .setTitle("游戏暂停！！")
+                .setPositiveButton("继续游戏", null)
+                .setNeutralButton("新游戏", new DialogInterface.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Auto-generated method stub
+                        startTimer(100);
+                        gameView.newGame();
+                    }
+
+                })
+                .setNegativeButton("退出游戏", new DialogInterface.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Auto-generated method stub
+                        MainActivity.this.finish();
+                    }
+                })
+                .create().show();
+            } else {
+                new AlertDialog.Builder(MainActivity.this)
+                .setPositiveButton("继续游戏", null)
+                .setNegativeButton("退出游戏", new DialogInterface.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Auto-generated method stub
+                        MainActivity.this.finish();
+                    }
+                })
+                .create().show();
+            }
+        }
         return super.onKeyDown(keyCode, event);
+    }
+    
+    public void startTimer(int t) {
+        time = t + 1;
+        if(timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                handler.sendEmptyMessage(GameConfig.TIMER);
+            }
+        }, 0, 1000);
+    }
+    
+    public void setTimer(int t) {
+        time = t;
+        timeText.setText(t + "");
+        progressBar.setProgress(t);
+    }
+    
+    public void showTimeOver() {
+        new AlertDialog.Builder(MainActivity.this)
+        .setTitle("时间到！！")
+        .setMessage("哈哈哈哈啊哈哈！！！")
+        .setPositiveButton("88", null)
+        .setNegativeButton("哈罗", null)
+        .create().show();
     }
 }

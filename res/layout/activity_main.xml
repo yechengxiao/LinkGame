@@ -23,17 +23,19 @@
     		android:layout_gravity="center_vertical"
             >
             <TextView 
-             android:layout_width="wrap_content"
-   			 android:layout_height="wrap_content"
-   			android:text="100"
-			android:layout_gravity="center_horizontal"   			
+                android:id="@+id/time_text"
+             	android:layout_width="wrap_content"
+   			 	android:layout_height="wrap_content"
+   				android:text="100"
+				android:layout_gravity="center_horizontal"   			
             />
             <ProgressBar 
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:max="100"
-            android:progress="50"
-            style="@android:style/Widget.ProgressBar.Horizontal"
+                android:id="@+id/progress_bar"
+	            android:layout_height="wrap_content"
+	            android:layout_width="match_parent"
+	            android:max="100"
+	            android:progress="100"
+	            style="@android:style/Widget.ProgressBar.Horizontal"
             />
         </LinearLayout>
         <TextView 
@@ -112,7 +114,5 @@
     		android:layout_centerInParent="true"
 	        />
 	</RelativeLayout>
-	
- 
 
 </LinearLayout>
