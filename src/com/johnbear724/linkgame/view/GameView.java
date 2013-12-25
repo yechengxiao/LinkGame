@@ -19,6 +19,7 @@ import com.johnbear724.linkgame.animation.LinkUpAnimation;
 import com.johnbear724.linkgame.animation.RemoveAnimationPiece;
 import com.johnbear724.linkgame.core.GameService;
 import com.johnbear724.linkgame.object.Piece;
+import com.johnbear724.linkgame.sound.GameSound;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
 import com.nineoldandroids.animation.ValueAnimator;
@@ -33,6 +34,7 @@ public class GameView extends View {
     private List<AnimationPiece> aniList = new ArrayList<AnimationPiece> ();
     private Handler handler;
     private boolean isStart;
+    private GameSound gameSound;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -70,6 +72,7 @@ public class GameView extends View {
         }
         if(selectedPiece == null || compared.getImageId() != selectedPiece.getImageId()) {
             selectedPiece = compared;
+            gameSound.play(GameSound.CLICK, 1, 1, 0, 0, 1);
         } else {
             List<Point> pList = gameService.checkLinkUp(compared.getRowNum(), compared.getColumnNum(), selectedPiece.getRowNum(), selectedPiece.getColumnNum());
             if(pList != null) {
@@ -78,6 +81,7 @@ public class GameView extends View {
                 compared.setImage(-1, getResources());
                 selectedPiece = null;
             } else {
+                gameSound.play(GameSound.CLICK, 1, 1, 0, 0, 1);
                 selectedPiece = compared;
             }
         }
@@ -90,9 +94,11 @@ public class GameView extends View {
         this.map = gameService.getMap();
     }
     
-    public void startGame(Handler handler) {
+    public void startGame(Handler handler, GameSound gameSound) {
         isStart = true;
+        this.gameSound = gameSound;
         this.handler = handler;
+        gameSound.getPlayer().start();
         startAnimator();
     }
     
@@ -113,6 +119,7 @@ public class GameView extends View {
     }
     
     private void startAnimator() {
+        gameSound.play(GameSound.REFRESH, 2, 2, 0, 0, 1.5f);
         //FIXME 当该动画还没有结束时再此调用该动画会造成冲突
         final float[][] yArray = new float[gameService.getGameConfig().getRows()][gameService.getGameConfig().getColumns()] ;
         for(int i = 0; i < gameService.getGameConfig().getRows(); i++) {
@@ -210,6 +217,7 @@ public class GameView extends View {
             }
         });
         ani.setDuration(500);
+        gameSound.play(GameSound.COMB_1, 1, 1, 0, 0, 1);
         ani.start();
     }
     

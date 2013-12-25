@@ -80,9 +80,10 @@ public class GameService {
             for(int i : sameHList) {
                 if(isLinkUp(oneRow, i, twoRow, i, linkMap)) {
                     LinkInfo ll = new LinkInfo(new Point(oneRow, oneColumn), new Point(oneRow, i), new Point(twoRow, i), new Point(twoRow, twoColumn));
-                    if(linkUpList.keyAt(ll.getSize()) == 0) {
-                        linkUpList.put(ll.getSize(), ll);
-                    }
+//                    if(linkUpList.keyAt(ll.getSize()) == 0) {
+//                        linkUpList.put(ll.getSize(), ll);
+//                    }
+                    linkUpList.put(ll.getSize(), ll);
                 }
             }
         }
@@ -99,9 +100,10 @@ public class GameService {
             for(int i : sameVList) {
                 if(isLinkUp(i, oneColumn, i, twoColumn, linkMap)) {
                     LinkInfo ll = new LinkInfo(new Point(oneRow, oneColumn), new Point(i, oneColumn), new Point(i, twoColumn), new Point(twoRow, twoColumn));
-                    if(linkUpList.keyAt(ll.getSize()) == 0) {
-                        linkUpList.put(ll.getSize(), ll);
-                    }
+//                    if(linkUpList.keyAt(ll.getSize()) == 0) {
+//                        linkUpList.put(ll.getSize(), ll);
+//                    }
+                    linkUpList.put(ll.getSize(), ll);
                 }
             }
         }

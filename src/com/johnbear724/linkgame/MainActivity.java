@@ -9,7 +9,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 
 import com.johnbear724.linkgame.core.GameConfig;
 import com.johnbear724.linkgame.core.GameService;
+import com.johnbear724.linkgame.sound.GameSound;
 import com.johnbear724.linkgame.view.GameView;
 
 public class MainActivity extends Activity {
@@ -28,9 +28,9 @@ public class MainActivity extends Activity {
     private TextView timeText;
     private GameService gameService; 
     private Handler handler;
+    private GameSound gameSound;
     private Timer timer = new Timer();
     private int time;
-    
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +63,7 @@ public class MainActivity extends Activity {
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         timeText = (TextView) findViewById(R.id.time_text);
         
+        gameSound = new GameSound(this);
         gameService = new GameService(new GameConfig(10, 7, 20, 20, this));
         gameView.setGameService(gameService);
         timer = new Timer();
@@ -70,6 +71,7 @@ public class MainActivity extends Activity {
             public void handleMessage(android.os.Message msg) {
                 switch(msg.what) {
                 case GameConfig.WIN_GAME :
+                    gameSound.play(GameSound.WIN, 1, 1, 0, 0, 1);
                     new AlertDialog.Builder(MainActivity.this)
                         .setTitle("胜利")
                         .setMessage("哈哈哈哈啊哈哈！！！")
@@ -83,7 +85,7 @@ public class MainActivity extends Activity {
                         setTimer(time);
                         timer.cancel();
                         timer = null;
-                        showTimeOver();
+                        showTimeUp();
                     } else {
                         setTimer(time);
                     }
@@ -99,8 +101,8 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 //FIXME 有时调用之后gameView不绘制，触摸也没反应
-                startTimer(100);
-                gameView.startGame(handler);
+                startTimer(10);
+                gameView.startGame(handler, gameSound);
                 startText.setVisibility(View.INVISIBLE);;
             }
         });
@@ -136,7 +138,8 @@ public class MainActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // TODO Auto-generated method stub
-                        MainActivity.this.finish();
+//                        MainActivity.this.finish();
+                        System.exit(0);
                     }
                 })
                 .create().show();
@@ -180,7 +183,8 @@ public class MainActivity extends Activity {
         progressBar.setProgress(t);
     }
     
-    public void showTimeOver() {
+    public void showTimeUp() {
+        gameSound.play(GameSound.TIME_UP, 1, 1, 0, 0, 1);
         new AlertDialog.Builder(MainActivity.this)
         .setTitle("时间到！！")
         .setMessage("哈哈哈哈啊哈哈！！！")
