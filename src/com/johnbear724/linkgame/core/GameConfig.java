@@ -8,6 +8,9 @@ public class GameConfig {
     public static int PIECE_HEIGHT = 64;
     public static final int WIN_GAME = 0x123;
     public static final int TIMER = 0x1234;
+    public static final int SCOUR_1 = 0x111;
+    public static final int SCOUR_2 = 0x112;
+    public static final int SCOUR_3 = 0x113;
     public static boolean OUTER_LINK = true;
     private int rows;
     private int columns;

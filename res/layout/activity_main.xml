@@ -70,11 +70,13 @@
     		android:text="2"
     		android:layout_gravity="center_vertical"
 	        />
-	  	<TextView 
+	  	<TextSwitcher 
+	  	    android:id="@+id/text_switcher"
 	  	    android:layout_width="0dp"
     		android:layout_height="wrap_content"
     		android:layout_weight="1"
-    		android:text="Nice"
+    		android:inAnimation="@anim/in_animation"
+    		android:outAnimation="@anim/out_animation"
     		android:layout_gravity="center_vertical"
     		android:gravity="center"
 	  	    />

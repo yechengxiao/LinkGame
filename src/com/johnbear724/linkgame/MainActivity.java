@@ -10,28 +10,36 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ProgressBar;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
+import android.widget.ViewSwitcher.ViewFactory;
 
 import com.johnbear724.linkgame.core.GameConfig;
 import com.johnbear724.linkgame.core.GameService;
 import com.johnbear724.linkgame.sound.GameSound;
 import com.johnbear724.linkgame.view.GameView;
+import com.nineoldandroids.animation.ValueAnimator;
+import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
 
 public class MainActivity extends Activity {
 
     private GameView gameView;
     private ProgressBar progressBar;
     private TextView timeText;
+    private TextView scoreText;
+    private TextSwitcher textSwitcher;
     private GameService gameService; 
     private Handler handler;
     private GameSound gameSound;
     private Timer timer = new Timer();
     private int time;
+    private int score;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,12 +73,26 @@ public class MainActivity extends Activity {
         gameView = (GameView) findViewById(R.id.game_view);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         timeText = (TextView) findViewById(R.id.time_text);
+        scoreText = (TextView) findViewById(R.id.score);
+        textSwitcher = (TextSwitcher) findViewById(R.id.text_switcher);
         
+        textSwitcher.setFactory(new ViewFactory() {
+            
+            @Override
+            public View makeView() {
+                // TODO Auto-generated method stub
+                TextView tv = new TextView(MainActivity.this);
+                tv.setGravity(Gravity.CENTER);
+                return tv;
+            }
+        });
+        textSwitcher.setText("Ready!");
         gameSound = new GameSound(this);
         gameService = new GameService(new GameConfig(10, 7, 20, 20, this));
         gameView.setGameService(gameService);
         timer = new Timer();
         handler = new Handler() {
+            int timeCount;
             public void handleMessage(android.os.Message msg) {
                 switch(msg.what) {
                 case GameConfig.WIN_GAME :
@@ -84,6 +106,7 @@ public class MainActivity extends Activity {
                     break;
                 case GameConfig.TIMER :
                     time--;
+                    timeCount++; 
                     if(time == 0) {
                         setTimer(time);
                         timer.cancel();
@@ -100,6 +123,15 @@ public class MainActivity extends Activity {
                         timeText.setTextColor(Color.GRAY);
                         setTimer(time);
                     }
+                    break;
+                case GameConfig.SCOUR_1 :
+                    score(100);
+                    break;
+                case GameConfig.SCOUR_2 :
+                    score(100);
+                    break;
+                case GameConfig.SCOUR_3 :
+                    score(100);
                     break;
                 }
                     
@@ -203,5 +235,39 @@ public class MainActivity extends Activity {
         .setPositiveButton("88", null)
         .setNegativeButton("哈罗", null)
         .create().show();
+    }
+    
+    public void score(int s) {
+        int origin = score;
+        score += s;
+        ValueAnimator ani = ValueAnimator.ofInt(origin, score);
+        ani.addUpdateListener(new AnimatorUpdateListener() {
+            
+            @Override
+            public void onAnimationUpdate(ValueAnimator arg0) {
+                // TODO Auto-generated method stub
+                scoreText.setText((Integer)arg0.getAnimatedValue() + "");
+            }
+        });
+        ani.setDuration(300);
+        ani.start();
+        switch(score) {
+        case 100 :
+            gameSound.play(GameSound.GOOD, 1, 1, 0, 0, 1);
+            textSwitcher.setText("GOOD");
+            break;
+        case 500 :
+            gameSound.play(GameSound.NICE, 1, 1, 0, 0, 1);
+            textSwitcher.setText("NICE");
+            break;
+        case 1000 :
+            gameSound.play(GameSound.COOL, 1, 1, 0, 0, 1);
+            textSwitcher.setText("COOL");
+            break;
+        case 1100 :
+            gameSound.play(GameSound.CRAZY, 1, 1, 0, 0, 1);
+            textSwitcher.setText("CRAZY");
+            break;
+        }
     }
 }

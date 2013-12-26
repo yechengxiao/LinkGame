@@ -22,6 +22,11 @@ public class GameSound {
     public static final int TIME_UP = 0x4;
     public static final int WIN = 0x5;
     public static final int COUNT = 0x6;
+    public static final int GOOD = 0x7;
+    public static final int NICE = 0x8;
+    public static final int COOL = 0x9;
+    public static final int CRAZY = 0x10;
+    
     
     public GameSound(Context context) {
         // TODO Auto-generated constructor stub
@@ -37,6 +42,10 @@ public class GameSound {
         soundMap.put(TIME_UP, soundPool.load(context, R.raw.timeup, 1));
         soundMap.put(WIN, soundPool.load(context, R.raw.rankchange, 1));
         soundMap.put(COUNT, soundPool.load(context, R.raw.count, 1));
+        soundMap.put(GOOD, soundPool.load(context, R.raw.good, 1));
+        soundMap.put(NICE, soundPool.load(context, R.raw.nice, 1));
+        soundMap.put(COOL, soundPool.load(context, R.raw.cool, 1));
+        soundMap.put(CRAZY, soundPool.load(context, R.raw.crazy, 1));
     }
     
     public int play(int soundID, float leftVolume, float rightVolume, int priority, int loop, float rate) {

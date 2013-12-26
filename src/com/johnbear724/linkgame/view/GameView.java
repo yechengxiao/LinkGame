@@ -17,12 +17,11 @@ import com.johnbear724.linkgame.R;
 import com.johnbear724.linkgame.animation.AnimationPiece;
 import com.johnbear724.linkgame.animation.LinkUpAnimation;
 import com.johnbear724.linkgame.animation.RemoveAnimationPiece;
+import com.johnbear724.linkgame.core.GameConfig;
 import com.johnbear724.linkgame.core.GameService;
 import com.johnbear724.linkgame.object.Piece;
 import com.johnbear724.linkgame.sound.GameSound;
 import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.ArgbEvaluator;
-import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
@@ -243,12 +242,15 @@ public class GameView extends View {
         switch(size) {
         case 2:
             gameSound.play(GameSound.COMB_1, 1, 1, 0, 0, 1);
+            handler.sendEmptyMessage(GameConfig.SCOUR_1);
             break;
         case 3:
             gameSound.play(GameSound.COMB_3, 1, 1, 0, 0, 1);
+            handler.sendEmptyMessage(GameConfig.SCOUR_2);
             break;
         case 4:
             gameSound.play(GameSound.COMB_5, 1, 1, 0, 0, 1);
+            handler.sendEmptyMessage(GameConfig.SCOUR_3);
             break;
         }
     }
