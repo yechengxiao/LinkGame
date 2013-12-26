@@ -14,11 +14,14 @@ public class GameSound {
     private SoundPool soundPool;
     private MediaPlayer mediaPlay;
     
-    public static final int REFRESH = 1;
-    public static final int CLICK = 2;
-    public static final int COMB_1 = 3;
-    public static final int TIME_UP = 4;
-    public static final int WIN = 5;
+    public static final int REFRESH = 0x1;
+    public static final int CLICK = 0x2;
+    public static final int COMB_1 = 0x31;
+    public static final int COMB_3 = 0x33;
+    public static final int COMB_5 = 0x35;
+    public static final int TIME_UP = 0x4;
+    public static final int WIN = 0x5;
+    public static final int COUNT = 0x6;
     
     public GameSound(Context context) {
         // TODO Auto-generated constructor stub
@@ -29,15 +32,40 @@ public class GameSound {
         soundMap.put(REFRESH, soundPool.load(context, R.raw.refresh, 1));
         soundMap.put(CLICK, soundPool.load(context, R.raw.click1, 1));
         soundMap.put(COMB_1, soundPool.load(context, R.raw.a_combo1, 1));
+        soundMap.put(COMB_3, soundPool.load(context, R.raw.a_combo3, 1));
+        soundMap.put(COMB_5, soundPool.load(context, R.raw.a_combo5, 1));
         soundMap.put(TIME_UP, soundPool.load(context, R.raw.timeup, 1));
         soundMap.put(WIN, soundPool.load(context, R.raw.rankchange, 1));
+        soundMap.put(COUNT, soundPool.load(context, R.raw.count, 1));
     }
     
-    public void play(int soundID, float leftVolume, float rightVolume, int priority, int loop, float rate) {
-        soundPool.play(soundMap.get(soundID), leftVolume, rightVolume, priority, loop, rate);
+    public int play(int soundID, float leftVolume, float rightVolume, int priority, int loop, float rate) {
+        return soundPool.play(soundMap.get(soundID), leftVolume, rightVolume, priority, loop, rate);
     }
     
     public MediaPlayer getPlayer() {
         return mediaPlay;
+    }
+    
+    public void stop(int streamID) {
+        soundPool.stop(streamID);
+    }
+    
+    public SoundPool getSoundPool() {
+        return soundPool;
+    }
+    
+    public void autoPause() {
+        if(mediaPlay.isPlaying()) {
+            mediaPlay.pause();
+        }
+        soundPool.autoPause();
+    }
+    
+    public void autoResume(boolean isStart) {
+        if(isStart) {
+            mediaPlay.start();
+        }
+        soundPool.autoResume();
     }
 }

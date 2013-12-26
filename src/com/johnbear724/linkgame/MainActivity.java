@@ -7,6 +7,7 @@ import java.util.TimerTask;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -45,6 +46,7 @@ public class MainActivity extends Activity {
         if(time != 0) {
             startTimer(time);
         }
+        gameSound.autoResume(gameView.isStart());
         super.onResume();
     }
     
@@ -55,6 +57,7 @@ public class MainActivity extends Activity {
             timer.cancel();
             timer = null;
         }
+        gameSound.autoPause();
         super.onPause();
     }
     
@@ -85,10 +88,19 @@ public class MainActivity extends Activity {
                         setTimer(time);
                         timer.cancel();
                         timer = null;
+                        gameView.gameOver();
                         showTimeUp();
+                        break;
+                    } else if(time <= 10) {
+                        gameView.countAnimation();
+                        setTimer(time);
+                        timeText.setTextColor(Color.RED);
+                        break;
                     } else {
+                        timeText.setTextColor(Color.GRAY);
                         setTimer(time);
                     }
+                    break;
                 }
                     
             };
@@ -101,7 +113,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 //FIXME 有时调用之后gameView不绘制，触摸也没反应
-                startTimer(10);
+                startTimer(12);
                 gameView.startGame(handler, gameSound);
                 startText.setVisibility(View.INVISIBLE);;
             }

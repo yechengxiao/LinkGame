@@ -21,6 +21,8 @@ import com.johnbear724.linkgame.core.GameService;
 import com.johnbear724.linkgame.object.Piece;
 import com.johnbear724.linkgame.sound.GameSound;
 import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.ArgbEvaluator;
+import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
@@ -35,6 +37,7 @@ public class GameView extends View {
     private Handler handler;
     private boolean isStart;
     private GameSound gameSound;
+    private int countStreamID;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -72,16 +75,17 @@ public class GameView extends View {
         }
         if(selectedPiece == null || compared.getImageId() != selectedPiece.getImageId()) {
             selectedPiece = compared;
-            gameSound.play(GameSound.CLICK, 1, 1, 0, 0, 1);
+            gameSound.play(GameSound.CLICK, 0.7f, 0.7f, 0, 0, 1);
         } else {
             List<Point> pList = gameService.checkLinkUp(compared.getRowNum(), compared.getColumnNum(), selectedPiece.getRowNum(), selectedPiece.getColumnNum());
             if(pList != null) {
                 linkUpAnimation(selectedPiece, compared, pList);
+                score(pList.size());
                 selectedPiece.setImage(-1, getResources());
                 compared.setImage(-1, getResources());
                 selectedPiece = null;
             } else {
-                gameSound.play(GameSound.CLICK, 1, 1, 0, 0, 1);
+                gameSound.play(GameSound.CLICK, 0.7f, 0.7f, 0, 0, 1);
                 selectedPiece = compared;
             }
         }
@@ -217,7 +221,6 @@ public class GameView extends View {
             }
         });
         ani.setDuration(500);
-        gameSound.play(GameSound.COMB_1, 1, 1, 0, 0, 1);
         ani.start();
     }
     
@@ -225,4 +228,28 @@ public class GameView extends View {
         return isStart;
     }
     
+    public void countAnimation() {
+        if(countStreamID == 0) {
+            countStreamID = gameSound.play(GameSound.COUNT, 0.5f, 0.5f, 0, -1, 1);
+        }
+    }
+    
+    public void gameOver() {
+        gameSound.stop(countStreamID);
+        countStreamID = 0;
+    }
+    
+    public void score(int size) {
+        switch(size) {
+        case 2:
+            gameSound.play(GameSound.COMB_1, 1, 1, 0, 0, 1);
+            break;
+        case 3:
+            gameSound.play(GameSound.COMB_3, 1, 1, 0, 0, 1);
+            break;
+        case 4:
+            gameSound.play(GameSound.COMB_5, 1, 1, 0, 0, 1);
+            break;
+        }
+    }
 }

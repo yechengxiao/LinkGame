@@ -53,7 +53,7 @@ public class GameService {
         selectedRow = selectedRow > (gameConfig.getRows() - 1) ? (gameConfig.getRows() - 1) : selectedRow;
         return map[selectedRow][selectedColumn];
     }
-    
+    //FIXME 有时连线不是最近距离，比较远
     public List<Point> checkLinkUp(int oneRow, int oneColumn, int twoRow, int twoColumn) {
         Piece[][] linkMap;
         if(GameConfig.OUTER_LINK) {
