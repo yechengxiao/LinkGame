@@ -79,6 +79,7 @@ public class GameView extends View {
             selectedPiece = compared;
             gameSound.play(GameSound.CLICK, 0.7f, 0.7f, 0, 0, 1);
         } else {
+            handler.sendEmptyMessage(GameConfig.WIN_GAME);
             List<Point> pList = gameService.checkLinkUp(compared.getRowNum(), compared.getColumnNum(), selectedPiece.getRowNum(), selectedPiece.getColumnNum());
             if(pList != null) {
                 linkUpAnimation(selectedPiece, compared, pList);
@@ -107,6 +108,7 @@ public class GameView extends View {
         if(!gameSound.getPlayer().isPlaying()) {
             gameSound.getPlayer().start();
         }
+        handler.sendEmptyMessage(GameConfig.START_TEXT_INVISIBLE);
         map = gameService.createMap();
         selectedPiece = null;
         startAnimator();

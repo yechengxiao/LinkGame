@@ -22,6 +22,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:theme="@android:style/Theme.Dialog"
+            android:name="com.johnbear724.linkgame.dialog.PauseDialog"
+            android:label="@string/title_activity_pause_dialog" >
+        </activity>
     </application>
 
 </manifest>

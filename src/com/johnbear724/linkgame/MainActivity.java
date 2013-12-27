@@ -6,7 +6,7 @@ import java.util.TimerTask;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,13 +15,18 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
+import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher.ViewFactory;
 
 import com.johnbear724.linkgame.core.GameConfig;
 import com.johnbear724.linkgame.core.GameService;
+import com.johnbear724.linkgame.dialog.PauseDialog;
 import com.johnbear724.linkgame.sound.GameSound;
 import com.johnbear724.linkgame.view.GameView;
 import com.nineoldandroids.animation.ValueAnimator;
@@ -33,7 +38,12 @@ public class MainActivity extends Activity {
     private ProgressBar progressBar;
     private TextView timeText;
     private TextView scoreText;
+    private TextView startText;
     private TextSwitcher textSwitcher;
+    private RelativeLayout timeUpLayout;
+    private RelativeLayout victoryLayout;
+    private RelativeLayout gameLayout;
+    private LayoutAnimationController layoutAni;
     private GameService gameService; 
     private Handler handler;
     private GameSound gameSound;
@@ -77,6 +87,9 @@ public class MainActivity extends Activity {
         timeText = (TextView) findViewById(R.id.time_text);
         scoreText = (TextView) findViewById(R.id.score);
         textSwitcher = (TextSwitcher) findViewById(R.id.text_switcher);
+        timeUpLayout = (RelativeLayout) findViewById(R.id.time_up_layout);
+        victoryLayout = (RelativeLayout) findViewById(R.id.victory_layout);
+        gameLayout = (RelativeLayout) findViewById(R.id.game_layout);
         
         textSwitcher.setFactory(new ViewFactory() {
             
@@ -96,14 +109,19 @@ public class MainActivity extends Activity {
             public void handleMessage(android.os.Message msg) {
                 switch(msg.what) {
                 case GameConfig.WIN_GAME :
+                    if(timer != null) {
+                        timer.cancel();
+                        timer = null;
+                    }
+                    gameView.gameOver();
                     gameSound.play(GameSound.WIN, 1, 1, 0, 0, 1);
-                    new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("胜利")
-                        .setMessage("哈哈哈哈啊哈哈！！！")
-                        .setPositiveButton("88", null)
-                        .setNegativeButton("哈罗", null)
-                        .create().show();
-                    reset();
+//                    new AlertDialog.Builder(MainActivity.this)
+//                        .setTitle("胜利")
+//                        .setMessage("哈哈哈哈啊哈哈！！！")
+//                        .setPositiveButton("88", null)
+//                        .setNegativeButton("哈罗", null)
+//                        .create().show();
+                    victoryLayout.setVisibility(View.VISIBLE);
                     break;
                 case GameConfig.TIMER :
                     time--;
@@ -141,22 +159,26 @@ public class MainActivity extends Activity {
                 case GameConfig.SCOUR_3 :
                     score(3);
                     break;
+                case GameConfig.START_TEXT_INVISIBLE :
+                    hideLayout();
                 }
                     
             };
         };
         gameView.setGame(gameService, gameSound, handler);
-        
-        final TextView startText = (TextView) findViewById(R.id.startText);
+        layoutAni = AnimationUtils.loadLayoutAnimation(this, R.anim.time_up_layout_ani);
+        timeUpLayout.setLayoutAnimation(layoutAni);
+        timeUpLayout.setVisibility(View.INVISIBLE);
+        victoryLayout.setLayoutAnimation(layoutAni);
+        victoryLayout.setVisibility(View.INVISIBLE);
+        startText = (TextView) findViewById(R.id.startText);
         startText.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 //FIXME 有时调用之后gameView不绘制，触摸也没反应
-                startTimer(12);
-                gameView.startGame();
-                startText.setVisibility(View.INVISIBLE);;
+                startGame(12);
             }
         });
     }
@@ -172,47 +194,25 @@ public class MainActivity extends Activity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // TODO Auto-generated method stub
         if(keyCode == KeyEvent.KEYCODE_BACK) {
-            if(true) {
-                new AlertDialog.Builder(MainActivity.this)
-                .setTitle("游戏暂停！！")
-                .setPositiveButton("继续游戏", null)
-                .setNeutralButton("新游戏", new DialogInterface.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO Auto-generated method stub
-                        reset();
-                        startTimer(100);
-                        gameView.startGame();
-                    }
-
-                })
-                .setNegativeButton("退出游戏", new DialogInterface.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO Auto-generated method stub
-//                        MainActivity.this.finish();
-                        System.exit(0);
-                    }
-                })
-                .create().show();
-            } else {
-                new AlertDialog.Builder(MainActivity.this)
-                .setPositiveButton("继续游戏", null)
-                .setNegativeButton("退出游戏", new DialogInterface.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO Auto-generated method stub
-                        MainActivity.this.finish();
-                    }
-                })
-                .create().show();
-            }
+            Intent intent = new Intent(MainActivity.this, PauseDialog.class);
+            MainActivity.this.startActivityForResult(intent, 0);
         }
         return super.onKeyDown(keyCode, event);
     }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Auto-generated method stub
+        switch(resultCode) {
+        case PauseDialog.NEW_GAME :
+            startGame(100);
+            break;
+        case PauseDialog.EXIT :
+            finish();
+            break;
+        }
+    }
+    
     
     public void startTimer(int t) {
         time = t + 1;
@@ -239,13 +239,13 @@ public class MainActivity extends Activity {
     
     public void showTimeUp() {
         gameSound.play(GameSound.TIME_UP, 1, 1, 0, 0, 1);
-        new AlertDialog.Builder(MainActivity.this)
-        .setTitle("时间到！！")
-        .setMessage("哈哈哈哈啊哈哈！！！")
-        .setPositiveButton("88", null)
-        .setNegativeButton("哈罗", null)
-        .create().show();
-        reset();
+        timeUpLayout.setVisibility(View.VISIBLE);
+//        new AlertDialog.Builder(MainActivity.this)
+//        .setTitle("时间到！！")
+//        .setMessage("哈哈哈哈啊哈哈！！！")
+//        .setPositiveButton("88", null)
+//        .setNegativeButton("哈罗", null)
+//        .create().show();
     }
     
     public void score(int level) {
@@ -293,6 +293,27 @@ public class MainActivity extends Activity {
         combo = 0;
         comboTime = 0;
         gameView.gameOver();
+    }
+    
+    public void startGame(int t) {
+        reset();
+        startTimer(t);
+        gameView.startGame();
+    }
+    
+    public void hideLayout() {
+        startText.setVisibility(View.INVISIBLE);
+        gameLayout.removeViewAt(10);
+        timeUpLayout.setVisibility(View.INVISIBLE);
+//        victoryLayout.setVisibility(View.INVISIBLE);
+    }
+    
+    public void showVictoryLayout(int id) {
+//        gameLayout.addV
+    }
+    
+    public void timeUpPlayAgain(View v) {
+        startGame(100);
     }
     
 }

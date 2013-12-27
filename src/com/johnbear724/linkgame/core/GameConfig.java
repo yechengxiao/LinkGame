@@ -11,6 +11,7 @@ public class GameConfig {
     public static final int SCOUR_1 = 0x111;
     public static final int SCOUR_2 = 0x112;
     public static final int SCOUR_3 = 0x113;
+    public static final int START_TEXT_INVISIBLE = 0x3;
     public static boolean OUTER_LINK = true;
     private int rows;
     private int columns;
