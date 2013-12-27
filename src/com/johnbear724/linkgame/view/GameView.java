@@ -65,6 +65,9 @@ public class GameView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // TODO Auto-generated method stub
+        if(!isStart) {
+            return false;
+        }
         if(event.getAction() != MotionEvent.ACTION_DOWN && event.getAction() != MotionEvent.ACTION_MOVE) {
             return false;
         }
@@ -92,20 +95,18 @@ public class GameView extends View {
         return true;
     }
     
-    public void setGameService(GameService gameService) {
+    public void setGame(GameService gameService, GameSound gameSound, Handler handler) {
         this.gameService = gameService;
+        this.gameSound = gameSound;
+        this.handler = handler;
         this.map = gameService.getMap();
     }
     
-    public void startGame(Handler handler, GameSound gameSound) {
+    public void startGame() {
         isStart = true;
-        this.gameSound = gameSound;
-        this.handler = handler;
-        gameSound.getPlayer().start();
-        startAnimator();
-    }
-    
-    public void newGame() {
+        if(!gameSound.getPlayer().isPlaying()) {
+            gameSound.getPlayer().start();
+        }
         map = gameService.createMap();
         selectedPiece = null;
         startAnimator();
@@ -234,8 +235,12 @@ public class GameView extends View {
     }
     
     public void gameOver() {
-        gameSound.stop(countStreamID);
-        countStreamID = 0;
+        if(countStreamID != 0) {
+            gameSound.stop(countStreamID);
+            countStreamID = 0;
+        }
+        this.isStart = false;
+        invalidate();
     }
     
     public void score(int size) {
@@ -254,4 +259,5 @@ public class GameView extends View {
             break;
         }
     }
+    
 }

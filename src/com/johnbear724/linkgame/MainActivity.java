@@ -40,6 +40,8 @@ public class MainActivity extends Activity {
     private Timer timer = new Timer();
     private int time;
     private int score;
+    private int comboTime;
+    private int combo;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,10 +91,8 @@ public class MainActivity extends Activity {
         textSwitcher.setText("Ready!");
         gameSound = new GameSound(this);
         gameService = new GameService(new GameConfig(10, 7, 20, 20, this));
-        gameView.setGameService(gameService);
         timer = new Timer();
         handler = new Handler() {
-            int timeCount;
             public void handleMessage(android.os.Message msg) {
                 switch(msg.what) {
                 case GameConfig.WIN_GAME :
@@ -103,10 +103,18 @@ public class MainActivity extends Activity {
                         .setPositiveButton("88", null)
                         .setNegativeButton("哈罗", null)
                         .create().show();
+                    reset();
                     break;
                 case GameConfig.TIMER :
                     time--;
-                    timeCount++; 
+                    comboTime++; 
+                    if(comboTime == 3) {
+                        if(combo != 0) {
+                            textSwitcher.setText("Ready!");
+                        }
+                        combo = 0;
+                        comboTime = 0;
+                    }
                     if(time == 0) {
                         setTimer(time);
                         timer.cancel();
@@ -125,18 +133,19 @@ public class MainActivity extends Activity {
                     }
                     break;
                 case GameConfig.SCOUR_1 :
-                    score(100);
+                    score(1);
                     break;
                 case GameConfig.SCOUR_2 :
-                    score(100);
+                    score(2);
                     break;
                 case GameConfig.SCOUR_3 :
-                    score(100);
+                    score(3);
                     break;
                 }
                     
             };
         };
+        gameView.setGame(gameService, gameSound, handler);
         
         final TextView startText = (TextView) findViewById(R.id.startText);
         startText.setOnClickListener(new OnClickListener() {
@@ -146,7 +155,7 @@ public class MainActivity extends Activity {
                 // TODO Auto-generated method stub
                 //FIXME 有时调用之后gameView不绘制，触摸也没反应
                 startTimer(12);
-                gameView.startGame(handler, gameSound);
+                gameView.startGame();
                 startText.setVisibility(View.INVISIBLE);;
             }
         });
@@ -163,7 +172,7 @@ public class MainActivity extends Activity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // TODO Auto-generated method stub
         if(keyCode == KeyEvent.KEYCODE_BACK) {
-            if(gameView.isStart()) {
+            if(true) {
                 new AlertDialog.Builder(MainActivity.this)
                 .setTitle("游戏暂停！！")
                 .setPositiveButton("继续游戏", null)
@@ -172,8 +181,9 @@ public class MainActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // TODO Auto-generated method stub
+                        reset();
                         startTimer(100);
-                        gameView.newGame();
+                        gameView.startGame();
                     }
 
                 })
@@ -235,11 +245,29 @@ public class MainActivity extends Activity {
         .setPositiveButton("88", null)
         .setNegativeButton("哈罗", null)
         .create().show();
+        reset();
     }
     
-    public void score(int s) {
+    public void score(int level) {
         int origin = score;
-        score += s;
+        score += (level * 100 + (combo - 1) * 100);
+        combo++;
+        comboTime = 0;
+        if(combo == 1) {
+            textSwitcher.setText("Combo1");
+        } else if(combo == 2) {
+            gameSound.play(GameSound.GOOD, 1, 1, 0, 0, 1);
+            textSwitcher.setText("Combo2: Good!");
+        } else if(combo == 3) {
+            gameSound.play(GameSound.NICE, 1, 1, 0, 0, 1);
+            textSwitcher.setText("Combo3: Nice!");
+        } else if(combo == 4) {
+            gameSound.play(GameSound.COOL, 1, 1, 0, 0, 1);
+            textSwitcher.setText("Combo4: Cool!");
+        }else if(combo >= 5) {
+            gameSound.play(GameSound.CRAZY, 1, 1, 0, 0, 1);
+            textSwitcher.setText("Combo" + combo + ": Crazy!");
+        } 
         ValueAnimator ani = ValueAnimator.ofInt(origin, score);
         ani.addUpdateListener(new AnimatorUpdateListener() {
             
@@ -251,23 +279,20 @@ public class MainActivity extends Activity {
         });
         ani.setDuration(300);
         ani.start();
-        switch(score) {
-        case 100 :
-            gameSound.play(GameSound.GOOD, 1, 1, 0, 0, 1);
-            textSwitcher.setText("GOOD");
-            break;
-        case 500 :
-            gameSound.play(GameSound.NICE, 1, 1, 0, 0, 1);
-            textSwitcher.setText("NICE");
-            break;
-        case 1000 :
-            gameSound.play(GameSound.COOL, 1, 1, 0, 0, 1);
-            textSwitcher.setText("COOL");
-            break;
-        case 1100 :
-            gameSound.play(GameSound.CRAZY, 1, 1, 0, 0, 1);
-            textSwitcher.setText("CRAZY");
-            break;
-        }
     }
+    
+    public void reset() {
+        setTimer(0);
+        if(timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        score = 0;
+        scoreText.setText("0");
+        textSwitcher.setText("Ready!");
+        combo = 0;
+        comboTime = 0;
+        gameView.gameOver();
+    }
+    
 }
