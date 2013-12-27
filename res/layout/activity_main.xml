@@ -194,6 +194,7 @@
 	  	    		android:layout_height="wrap_content"
 	  	    		android:layout_weight="1"
 	  	    		android:text="0"
+	  	    		android:id="@+id/victory_time"
 	  	    		android:gravity="center"
 	  	            />
 	  	        <TextView 
@@ -201,6 +202,7 @@
 	  	    		android:layout_height="wrap_content"
 	  	    		android:layout_weight="1"
 	  	    		android:text="0"
+	  	    		android:id="@+id/victory_score"
 	  	    		android:gravity="center"
 	  	            />
 	  	    </LinearLayout>

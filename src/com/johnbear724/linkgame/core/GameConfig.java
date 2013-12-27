@@ -6,7 +6,7 @@ public class GameConfig {
     
     public static int PIECE_WIDTH = 64;
     public static int PIECE_HEIGHT = 64;
-    public static final int WIN_GAME = 0x123;
+    public static final int Victory = 0x123;
     public static final int TIMER = 0x1234;
     public static final int SCOUR_1 = 0x111;
     public static final int SCOUR_2 = 0x112;

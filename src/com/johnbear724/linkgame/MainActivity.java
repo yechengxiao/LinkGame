@@ -5,7 +5,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -17,7 +16,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextSwitcher;
@@ -39,10 +37,11 @@ public class MainActivity extends Activity {
     private TextView timeText;
     private TextView scoreText;
     private TextView startText;
+    private TextView victoryTime;
+    private TextView victoryScore;
     private TextSwitcher textSwitcher;
     private RelativeLayout timeUpLayout;
     private RelativeLayout victoryLayout;
-    private RelativeLayout gameLayout;
     private LayoutAnimationController layoutAni;
     private GameService gameService; 
     private Handler handler;
@@ -86,10 +85,11 @@ public class MainActivity extends Activity {
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         timeText = (TextView) findViewById(R.id.time_text);
         scoreText = (TextView) findViewById(R.id.score);
+        victoryScore = (TextView) findViewById(R.id.victory_score);
+        victoryTime = (TextView) findViewById(R.id.victory_time);
         textSwitcher = (TextSwitcher) findViewById(R.id.text_switcher);
         timeUpLayout = (RelativeLayout) findViewById(R.id.time_up_layout);
         victoryLayout = (RelativeLayout) findViewById(R.id.victory_layout);
-        gameLayout = (RelativeLayout) findViewById(R.id.game_layout);
         
         textSwitcher.setFactory(new ViewFactory() {
             
@@ -108,20 +108,8 @@ public class MainActivity extends Activity {
         handler = new Handler() {
             public void handleMessage(android.os.Message msg) {
                 switch(msg.what) {
-                case GameConfig.WIN_GAME :
-                    if(timer != null) {
-                        timer.cancel();
-                        timer = null;
-                    }
-                    gameView.gameOver();
-                    gameSound.play(GameSound.WIN, 1, 1, 0, 0, 1);
-//                    new AlertDialog.Builder(MainActivity.this)
-//                        .setTitle("胜利")
-//                        .setMessage("哈哈哈哈啊哈哈！！！")
-//                        .setPositiveButton("88", null)
-//                        .setNegativeButton("哈罗", null)
-//                        .create().show();
-                    victoryLayout.setVisibility(View.VISIBLE);
+                case GameConfig.Victory :
+                    showVictory();
                     break;
                 case GameConfig.TIMER :
                     time--;
@@ -167,9 +155,7 @@ public class MainActivity extends Activity {
         };
         gameView.setGame(gameService, gameSound, handler);
         layoutAni = AnimationUtils.loadLayoutAnimation(this, R.anim.time_up_layout_ani);
-        timeUpLayout.setLayoutAnimation(layoutAni);
         timeUpLayout.setVisibility(View.INVISIBLE);
-        victoryLayout.setLayoutAnimation(layoutAni);
         victoryLayout.setVisibility(View.INVISIBLE);
         startText = (TextView) findViewById(R.id.startText);
         startText.setOnClickListener(new OnClickListener() {
@@ -240,19 +226,27 @@ public class MainActivity extends Activity {
     public void showTimeUp() {
         gameSound.play(GameSound.TIME_UP, 1, 1, 0, 0, 1);
         timeUpLayout.setVisibility(View.VISIBLE);
-//        new AlertDialog.Builder(MainActivity.this)
-//        .setTitle("时间到！！")
-//        .setMessage("哈哈哈哈啊哈哈！！！")
-//        .setPositiveButton("88", null)
-//        .setNegativeButton("哈罗", null)
-//        .create().show();
+        timeUpLayout.setLayoutAnimation(layoutAni);
+    }
+    
+    public void showVictory() {
+        if(timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        gameView.gameOver();
+        gameSound.play(GameSound.WIN, 1, 1, 0, 0, 1);
+        victoryLayout.setVisibility(View.VISIBLE);
+        victoryLayout.setLayoutAnimation(layoutAni);
+        victoryTime.setText("" + (100 - time));
+        victoryScore.setText("" + score);
     }
     
     public void score(int level) {
         int origin = score;
-        score += (level * 100 + (combo - 1) * 100);
         combo++;
         comboTime = 0;
+        score += (level * 100 + (combo - 1) * 100);
         if(combo == 1) {
             textSwitcher.setText("Combo1");
         } else if(combo == 2) {
@@ -277,7 +271,7 @@ public class MainActivity extends Activity {
                 scoreText.setText((Integer)arg0.getAnimatedValue() + "");
             }
         });
-        ani.setDuration(300);
+        ani.setDuration(800);
         ani.start();
     }
     
@@ -303,13 +297,8 @@ public class MainActivity extends Activity {
     
     public void hideLayout() {
         startText.setVisibility(View.INVISIBLE);
-        gameLayout.removeViewAt(10);
         timeUpLayout.setVisibility(View.INVISIBLE);
-//        victoryLayout.setVisibility(View.INVISIBLE);
-    }
-    
-    public void showVictoryLayout(int id) {
-//        gameLayout.addV
+        victoryLayout.setVisibility(View.INVISIBLE);
     }
     
     public void timeUpPlayAgain(View v) {
