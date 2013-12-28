@@ -332,7 +332,7 @@ public class GameView extends View {
             Log.e("search", linkI.getPList().toString());
             final SearchAnimation sAni = new SearchAnimation();
             sAni.setPList(linkI.getFindPoint(map));
-            sAni.setBitmap(selector);
+            sAni.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.hint));
             ValueAnimator ani = ObjectAnimator.ofFloat(sAni, "scale", 0.7f, 1.2f);
             ani.setDuration(400);
             ani.addListener(new AnimatorListener() {
