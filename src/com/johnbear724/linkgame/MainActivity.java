@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextSwitcher;
@@ -39,6 +40,10 @@ public class MainActivity extends Activity {
     private TextView startText;
     private TextView victoryTime;
     private TextView victoryScore;
+    private ImageView refreshImage;
+    private ImageView searchImage;
+    private TextSwitcher refreshSwitcher;
+    private TextSwitcher searchSwitcher;
     private TextSwitcher textSwitcher;
     private RelativeLayout timeUpLayout;
     private RelativeLayout victoryLayout;
@@ -51,6 +56,8 @@ public class MainActivity extends Activity {
     private int score;
     private int comboTime;
     private int combo;
+    private int refreshNum;
+    private int searchNum;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,10 +95,38 @@ public class MainActivity extends Activity {
         victoryScore = (TextView) findViewById(R.id.victory_score);
         victoryTime = (TextView) findViewById(R.id.victory_time);
         textSwitcher = (TextSwitcher) findViewById(R.id.text_switcher);
+        refreshSwitcher = (TextSwitcher) findViewById(R.id.refresh_switcher);
+        searchSwitcher = (TextSwitcher) findViewById(R.id.search_switcher);
         timeUpLayout = (RelativeLayout) findViewById(R.id.time_up_layout);
         victoryLayout = (RelativeLayout) findViewById(R.id.victory_layout);
+        refreshImage = (ImageView) findViewById(R.id.refresh);
+        searchImage = (ImageView) findViewById(R.id.search);
         
-        textSwitcher.setFactory(new ViewFactory() {
+        OnClickListener refreshListener = new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                if(refreshNum == 2 || refreshNum == 1) {
+                    refreshNum--;
+                    refreshSwitcher.setText(refreshNum + "");
+                    gameView.refresh();
+                }
+            }
+        };
+        OnClickListener searchListener = new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                if(searchNum == 2 || searchNum == 1) {
+                    searchNum--;
+                    searchSwitcher.setText(searchNum + "");
+                    gameView.search();
+                }
+            }
+        };
+        ViewFactory viewFactory = new ViewFactory() {
             
             @Override
             public View makeView() {
@@ -100,7 +135,15 @@ public class MainActivity extends Activity {
                 tv.setGravity(Gravity.CENTER);
                 return tv;
             }
-        });
+        };
+        refreshSwitcher.setFactory(viewFactory);
+        searchSwitcher.setFactory(viewFactory);
+        refreshImage.setOnClickListener(refreshListener);
+        refreshSwitcher.setOnClickListener(refreshListener);
+        searchImage.setOnClickListener(searchListener);
+        searchSwitcher.setOnClickListener(searchListener);
+        
+        textSwitcher.setFactory(viewFactory);
         textSwitcher.setText("Ready!");
         gameSound = new GameSound(this);
         gameService = new GameService(new GameConfig(10, 7, 20, 20, this));
@@ -286,6 +329,10 @@ public class MainActivity extends Activity {
         textSwitcher.setText("Ready!");
         combo = 0;
         comboTime = 0;
+        refreshNum = 2;
+        searchNum = 2;
+        refreshSwitcher.setText(refreshNum + "");
+        searchSwitcher.setText(searchNum + "");
         gameView.gameOver();
     }
     

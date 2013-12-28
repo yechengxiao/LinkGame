@@ -30,7 +30,7 @@ public class GameSound {
     
     public GameSound(Context context) {
         // TODO Auto-generated constructor stub
-        soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+        soundPool = new SoundPool(12, AudioManager.STREAM_MUSIC, 0);
         mediaPlay = MediaPlayer.create(context, R.raw.play);
         mediaPlay.setLooping(true);
         

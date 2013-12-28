@@ -29,6 +29,11 @@ public class LinkInfo {
         }
     }
     
+    public LinkInfo(Point begin, Point end) {
+        pointList.add(begin);
+        pointList.add(end);
+    }
+    
     public int getSize() {
         return pointList.size();
     }
@@ -41,4 +46,19 @@ public class LinkInfo {
         return pList; 
     }
     
+    public List<Point> getFindPoint(Piece[][] map) {
+        List<Point> pList = new ArrayList<Point> ();
+        for(Point p : pointList) {
+            pList.add( new Point((int)map[p.x - 1][p.y - 1].getX() , (int)map[p.x - 1][p.y - 1].getY()));
+        }
+        return pList;  
+    }
+    
+    public List<Point> getPList() {
+        return pointList;
+    }
+    
+    public Point getPointOne() {
+        return new Point(pointList.get(0).x - 1, pointList.get(0).y - 1);
+    }
 }

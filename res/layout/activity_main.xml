@@ -63,12 +63,16 @@
             android:layout_width="wrap_content"
     		android:layout_height="wrap_content"
     		android:src="@drawable/refresh"
+    		android:id="@+id/refresh"
             />
-	    <TextView 
+	    <TextSwitcher 
 	        android:layout_width="wrap_content"
     		android:layout_height="wrap_content"
     		android:text="2"
+    		android:id="@+id/refresh_switcher"
     		android:layout_gravity="center_vertical"
+    		android:inAnimation="@anim/slide_top_in"
+    		android:outAnimation="@anim/slide_top_out"
 	        />
 	  	<TextSwitcher 
 	  	    android:id="@+id/text_switcher"
@@ -80,16 +84,20 @@
     		android:layout_gravity="center_vertical"
     		android:gravity="center"
 	  	    />
-	  	<TextView 
+	  	<TextSwitcher 
 	        android:layout_width="wrap_content"
     		android:layout_height="wrap_content"
     		android:text="2"
+    		android:id="@+id/search_switcher"
     		android:layout_gravity="center_vertical"
+    		android:inAnimation="@anim/slide_top_in"
+    		android:outAnimation="@anim/slide_top_out"
 	        />
 	  	<ImageView 
             android:layout_width="wrap_content"
     		android:layout_height="wrap_content"
     		android:src="@drawable/search"
+    		android:id="@+id/search"
             />
 	    
 	</LinearLayout>

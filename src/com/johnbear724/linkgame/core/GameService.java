@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.Point;
+import android.util.Log;
+import android.util.Pair;
 import android.util.SparseArray;
 
 import com.johnbear724.linkgame.object.LinkInfo;
@@ -227,4 +229,113 @@ public class GameService {
         return map;
     }
     
+    public LinkInfo findLinkablePiece() {
+        Piece[][] linkMap;
+        if(GameConfig.OUTER_LINK) {
+            linkMap = getOuterMap(map);
+        } else {
+            linkMap = map;
+        }
+        ArrayList<Pair<Integer, Integer>>[][] linkableMap = new ArrayList[linkMap.length][linkMap[0].length];
+        for(int x = 0; x < linkMap.length; x++) {
+            for(int y = 0; y < linkMap[0].length; y++) {
+                
+                ArrayList<Pair<Integer, Integer>> linkable = new ArrayList<Pair<Integer,Integer>>();
+                linkableMap[x][y] = linkable;
+                int sign = 0;
+                ArrayList<Pair<Integer, Integer>> xLinkable = new ArrayList<Pair<Integer,Integer>>();
+                for(int i = 0; i < linkMap.length; i++) {
+                    if(i == x) {
+                        sign = 1;
+                    } else if(linkMap[i][y].getImageId() == -1) {
+                        xLinkable.add(new Pair<Integer, Integer>(i, y));
+                    } else if(linkMap[i][y].getImageId() != -1) {
+                        if(sign != 1) {
+                            xLinkable.clear();
+                            xLinkable.add(new Pair<Integer, Integer>(i, y));
+                        } else {
+                            xLinkable.add(new Pair<Integer, Integer>(i, y));
+                            break;
+                        }
+                    }
+                }
+                ArrayList<Pair<Integer, Integer>> yLinkable = new ArrayList<Pair<Integer,Integer>>();
+                for(int j = 0; j < linkMap[0].length; j++) {
+                    if(j == y) {
+                        sign = 2;
+                    } else if(linkMap[x][j].getImageId() == -1) {
+                        yLinkable.add(new Pair<Integer, Integer>(x, j));
+                    } else if(linkMap[x][j].getImageId() != -1) {
+                        if(sign != 2) {
+                            yLinkable.clear();
+                            yLinkable.add(new Pair<Integer, Integer>(x, j));
+                        } else {
+                            yLinkable.add(new Pair<Integer, Integer>(x, j));
+                            break;
+                        }
+                    }
+                }
+                linkable.addAll(xLinkable);
+                linkable.addAll(yLinkable);
+            }
+        }
+        
+        for(int i = 0; i < linkMap.length; i++) {
+            for(int j = 0; j < linkMap[0].length; j++) {
+                if(linkMap[i][j].getImageId() != -1) {
+                    
+                    for(Pair<Integer, Integer> p : linkableMap[i][j]) {
+                        if(linkMap[i][j].getImageId() == linkMap[p.first][p.second].getImageId()) {
+                            return new LinkInfo(new Point(i, j), new Point(p.first, p.second)); 
+                        }
+                    }
+                    
+                    
+                    for(Pair<Integer, Integer> p : linkableMap[i][j]) {
+                        if(linkMap[p.first][p.second].getImageId() == -1) {
+                            for(Pair<Integer, Integer> p1 : linkableMap[p.first][p.second]) {
+                                if(p1.first == i && p1.second == j) {
+                                } else if(linkMap[i][j].getImageId() == linkMap[p1.first][p1.second].getImageId()) {
+                                    return new LinkInfo(new Point(i, j), new Point(p1.first, p1.second)); 
+                                }
+                            }
+                        }
+                    }
+                    
+                    for(Pair<Integer, Integer> p : linkableMap[i][j]) {
+                        if(p.first == i && p.second == j) {
+                            
+                        } else if(linkMap[p.first][p.second].getImageId() == -1) {
+                            for(Pair<Integer, Integer> p1 : linkableMap[p.first][p.second]) {
+                                if(p1.first == i && p1.second == j) {
+                                    
+                                } else if(linkMap[p1.first][p1.second].getImageId() == -1) {
+                                    for(Pair<Integer, Integer> p2 : linkableMap[p1.first][p1.second]) {
+                                        if(p2.first == i && p2.second == j) {
+                                        } else if(linkMap[i][j].getImageId() == linkMap[p2.first][p2.second].getImageId()) {
+                                            return new LinkInfo(new Point(i, j), new Point(p2.first, p2.second)); 
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                }
+            }
+        }
+        return null;
+    }
+    
+    public List<Pair<Integer, Integer>> findLinkable(Piece[][] linkMap, int x, int y) {
+        for(int i = 0; i < linkMap.length; i++) {
+            if(i == x) {
+                
+            } else if(linkMap[i][y].getImageId() == -1){
+                
+            }
+            
+        }
+        return null;
+    }
 }
