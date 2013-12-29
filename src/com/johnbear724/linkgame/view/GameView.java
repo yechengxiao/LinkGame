@@ -273,6 +273,7 @@ public class GameView extends View {
     
     public void refresh() {
         aniList.clear();
+        selectedPiece = null;
         gameSound.play(GameSound.SHUFFLE, 1, 1, 0, 0, 1);
         ValueAnimator fadingAni = ObjectAnimator.ofInt(this, "paintAlpha", 255, 0);
         fadingAni.addListener(new AnimatorListener() {
