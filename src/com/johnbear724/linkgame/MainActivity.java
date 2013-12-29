@@ -4,7 +4,13 @@ package com.johnbear724.linkgame;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import android.app.Activity;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.AlertDialog;
+import org.holoeverywhere.widget.ProgressBar;
+import org.holoeverywhere.widget.TextView;
+
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -17,10 +23,8 @@ import android.view.View.OnClickListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextSwitcher;
-import android.widget.TextView;
 import android.widget.ViewSwitcher.ViewFactory;
 
 import com.johnbear724.linkgame.core.GameConfig;
@@ -225,6 +229,24 @@ public class MainActivity extends Activity {
         if(keyCode == KeyEvent.KEYCODE_BACK) {
             Intent intent = new Intent(MainActivity.this, PauseDialog.class);
             MainActivity.this.startActivityForResult(intent, 0);
+//            AlertDialog aD = new AlertDialog.Builder(MainActivity.this)
+//            .setTitle("时间到！！")
+//            .setMessage("哈哈哈哈啊哈哈！！！")
+//            .setPositiveButton("退出游戏", null)
+//            .setNeutralButton("新游戏", null)
+//            .setNegativeButton("继续游戏", null)
+//            .create();
+//            aD.show();
+//            aD.setOnCancelListener(new OnCancelListener() {
+//                
+//                @Override
+//                public void onCancel(DialogInterface dialog) {
+//                    // TODO Auto-generated method stub
+//                    onResume();
+//                }
+//            });
+//            onPause();
+            
         }
         return super.onKeyDown(keyCode, event);
     }

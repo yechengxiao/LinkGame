@@ -35,7 +35,7 @@
 	            android:layout_width="match_parent"
 	            android:max="100"
 	            android:progress="100"
-	            style="@android:style/Widget.ProgressBar.Horizontal"
+	            style="@style/Holo.ProgressBar.Horizontal.Light"
             />
         </LinearLayout>
         <TextView 

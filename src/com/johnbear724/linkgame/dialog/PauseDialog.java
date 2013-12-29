@@ -1,6 +1,8 @@
 package com.johnbear724.linkgame.dialog;
 
-import android.app.Activity;
+
+import org.holoeverywhere.app.Activity;
+
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -16,17 +18,17 @@ public class PauseDialog extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+//        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         setContentView(R.layout.activity_pause_dialog);
-        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title);
+//        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.pause_dialog, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.pause_dialog, menu);
+//        return true;
+//    }
 
     public void resume(View v) {
         finish();
