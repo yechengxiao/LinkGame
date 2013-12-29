@@ -198,6 +198,7 @@ public class GameView extends View {
                 int currentAlpha = (int) (255 - currentValue * 255);
                 removeAP1.setAlpha(currentAlpha);
                 removeAP2.setAlpha(currentAlpha);
+                linkUpAni.setAlpha(currentAlpha);
                 postInvalidate();
             }
         });
@@ -329,7 +330,6 @@ public class GameView extends View {
     public void search() {
         final LinkInfo linkI = gameService.findLinkablePiece();
         if(linkI != null) {
-            Log.e("search", linkI.getPList().toString());
             final SearchAnimation sAni = new SearchAnimation();
             sAni.setPList(linkI.getFindPoint(map));
             sAni.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.hint));
