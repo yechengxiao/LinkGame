@@ -273,6 +273,7 @@ public class GameView extends View {
     
     public void refresh() {
         aniList.clear();
+        gameSound.play(GameSound.SHUFFLE, 1, 1, 0, 0, 1);
         ValueAnimator fadingAni = ObjectAnimator.ofInt(this, "paintAlpha", 255, 0);
         fadingAni.addListener(new AnimatorListener() {
             
@@ -326,6 +327,7 @@ public class GameView extends View {
     }
     
     public void search() {
+        gameSound.play(GameSound.HINT, 1, 1, 0, 0, 1);
         final LinkInfo linkI = gameService.findLinkablePiece();
         if(linkI != null) {
             final SearchAnimation sAni = new SearchAnimation();
