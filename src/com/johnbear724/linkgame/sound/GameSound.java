@@ -26,11 +26,13 @@ public class GameSound {
     public static final int NICE = 0x8;
     public static final int COOL = 0x9;
     public static final int CRAZY = 0x10;
+    public static final int HINT = 0x11;
+    public static final int SHUFFLE = 0x12;
     
     
     public GameSound(Context context) {
         // TODO Auto-generated constructor stub
-        soundPool = new SoundPool(12, AudioManager.STREAM_MUSIC, 0);
+        soundPool = new SoundPool(14, AudioManager.STREAM_MUSIC, 0);
         mediaPlay = MediaPlayer.create(context, R.raw.play);
         mediaPlay.setLooping(true);
         
@@ -46,6 +48,8 @@ public class GameSound {
         soundMap.put(NICE, soundPool.load(context, R.raw.nice, 1));
         soundMap.put(COOL, soundPool.load(context, R.raw.cool, 1));
         soundMap.put(CRAZY, soundPool.load(context, R.raw.crazy, 1));
+        soundMap.put(HINT, soundPool.load(context, R.raw.hint, 1));
+        soundMap.put(SHUFFLE, soundPool.load(context, R.raw.shuffle, 1));
     }
     
     public int play(int soundID, float leftVolume, float rightVolume, int priority, int loop, float rate) {

@@ -12,7 +12,6 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -29,7 +28,6 @@ import com.johnbear724.linkgame.object.Piece;
 import com.johnbear724.linkgame.sound.GameSound;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
-import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
@@ -275,6 +273,8 @@ public class GameView extends View {
     
     public void refresh() {
         aniList.clear();
+        selectedPiece = null;
+        gameSound.play(GameSound.SHUFFLE, 1, 1, 0, 0, 1);
         ValueAnimator fadingAni = ObjectAnimator.ofInt(this, "paintAlpha", 255, 0);
         fadingAni.addListener(new AnimatorListener() {
             
@@ -328,6 +328,7 @@ public class GameView extends View {
     }
     
     public void search() {
+        gameSound.play(GameSound.HINT, 1, 1, 0, 0, 1);
         final LinkInfo linkI = gameService.findLinkablePiece();
         if(linkI != null) {
             final SearchAnimation sAni = new SearchAnimation();

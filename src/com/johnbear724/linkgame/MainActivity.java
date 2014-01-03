@@ -4,8 +4,12 @@ package com.johnbear724.linkgame;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import android.app.Activity;
-import android.content.Intent;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.AlertDialog;
+import org.holoeverywhere.widget.ProgressBar;
+import org.holoeverywhere.widget.TextView;
+
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,15 +21,12 @@ import android.view.View.OnClickListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextSwitcher;
-import android.widget.TextView;
 import android.widget.ViewSwitcher.ViewFactory;
 
 import com.johnbear724.linkgame.core.GameConfig;
 import com.johnbear724.linkgame.core.GameService;
-import com.johnbear724.linkgame.dialog.PauseDialog;
 import com.johnbear724.linkgame.sound.GameSound;
 import com.johnbear724.linkgame.view.GameView;
 import com.nineoldandroids.animation.ValueAnimator;
@@ -48,6 +49,7 @@ public class MainActivity extends Activity {
     private RelativeLayout timeUpLayout;
     private RelativeLayout victoryLayout;
     private LayoutAnimationController layoutAni;
+    private AlertDialog pauseDialog;
     private GameService gameService; 
     private Handler handler;
     private GameSound gameSound;
@@ -196,6 +198,36 @@ public class MainActivity extends Activity {
                     
             };
         };
+        pauseDialog = new AlertDialog.Builder(MainActivity.this)
+        .setTitle("游戏暂停！！")
+//        .setMessage("游戏暂停！！")
+        .setPositiveButton("退出游戏", new DialogInterface.OnClickListener() {
+            
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO Auto-generated method stub
+//                MainActivity.this.finish();
+                System.exit(0);
+            }
+        })
+        .setNeutralButton("新游戏", new DialogInterface.OnClickListener() {
+            
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO Auto-generated method stub
+                startGame(100);
+            }
+        } )
+        .setNegativeButton("继续游戏", null)
+        .create();
+        pauseDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                // TODO Auto-generated method stub
+                onResume();
+            }
+        });
         gameView.setGame(gameService, gameSound, handler);
         layoutAni = AnimationUtils.loadLayoutAnimation(this, R.anim.time_up_layout_ani);
         timeUpLayout.setVisibility(View.INVISIBLE);
@@ -223,24 +255,24 @@ public class MainActivity extends Activity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // TODO Auto-generated method stub
         if(keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(MainActivity.this, PauseDialog.class);
-            MainActivity.this.startActivityForResult(intent, 0);
+            onPause();
+            pauseDialog.show();
         }
         return super.onKeyDown(keyCode, event);
     }
     
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Auto-generated method stub
-        switch(resultCode) {
-        case PauseDialog.NEW_GAME :
-            startGame(100);
-            break;
-        case PauseDialog.EXIT :
-            finish();
-            break;
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        // TODO Auto-generated method stub
+//        switch(resultCode) {
+//        case PauseDialog.NEW_GAME :
+//            startGame(100);
+//            break;
+//        case PauseDialog.EXIT :
+//            finish();
+//            break;
+//        }
+//    }
     
     
     public void startTimer(int t) {
