@@ -5,13 +5,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-/*
+/**
  *该类用于创建地图
  * 先创建一个大小为整个地图一半大小的数组a，
  * 然后再复制数组a获得与地图大小相同的数组,
  * 再把该数组打乱
  */
-
 public class Map {
     
     private int rows;
@@ -21,7 +20,6 @@ public class Map {
     private boolean isEvenNumber;
     
     public Map(int rows, int columns, int typeNum) {
-        // TODO Auto-generated constructor stub
         this.rows = rows;
         this.columns = columns;
         this.typeNum = typeNum;

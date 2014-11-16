@@ -1,31 +1,45 @@
 package com.johnbear724.linkgame.core;
 
 import android.content.Context;
+import android.view.View;
+import com.johnbear724.linkgame.R;
 
+/**
+ * 游戏配置类
+ */
 public class GameConfig {
-    
-    public static int PIECE_WIDTH = 64;
-    public static int PIECE_HEIGHT = 64;
-    public static final int Victory = 0x123;
-    public static final int TIMER = 0x1234;
-    public static final int SCOUR_1 = 0x111;
-    public static final int SCOUR_2 = 0x112;
-    public static final int SCOUR_3 = 0x113;
-    public static final int START_TEXT_INVISIBLE = 0x3;
-    public static boolean OUTER_LINK = true;
+
+    public static boolean OUTER_LINK = true; //是否可以从地图外层连线
     private int rows;
     private int columns;
     private int beginX;
     private int beginY;
+    private int pieceSize;
     private Context context;
-    
-    public GameConfig(int rows, int columns, int beginX, int beginY, Context context) {
-        // TODO Auto-generated constructor stub
-        this.rows = rows;
-        this.columns = columns;
-        this.beginX = beginX;
-        this.beginY = beginY;
-        this.context = context;
+
+    public GameConfig(View gameView) {
+        this.context = gameView.getContext();
+        pieceSize = context.getResources().getDimensionPixelSize(R.dimen.piece_size);
+//        int margin = context.getResources().getDimensionPixelOffset(R.dimen.game_view_margin);
+        int viewWidth = gameView.getWidth();
+        int viewHeight = gameView.getHeight();
+        this.rows = viewHeight / pieceSize;
+        this.columns = viewWidth / pieceSize;
+        if ((rows * columns) % 2 != 0) {
+            rows--;
+        }
+        int gameWidth = pieceSize * columns;
+        int gameHeight = pieceSize * rows;
+        this.beginX = (viewWidth - gameWidth) / 2;
+        this.beginY = (viewHeight - gameHeight)/ 2;
+    }
+
+    public int getPieceWidth() {
+        return pieceSize;
+    }
+
+    public int getPieceHeight() {
+        return pieceSize;
     }
 
     public int getRows() {

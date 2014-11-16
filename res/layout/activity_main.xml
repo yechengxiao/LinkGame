@@ -3,242 +3,238 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity" >
+    tools:context=".MainActivity">
 
-    <LinearLayout 
+    <LinearLayout
         android:layout_width="match_parent"
-    	android:layout_height="wrap_content"
-    	android:orientation="horizontal"
-        >
-        <ImageView 
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
             android:layout_width="wrap_content"
-    		android:layout_height="wrap_content"
-    		android:src="@drawable/time"
-            />
-        <LinearLayout 
+            android:layout_height="wrap_content"
+            android:src="@drawable/time" />
+
+        <LinearLayout
             android:layout_width="wrap_content"
-    		android:layout_height="wrap_content"
-    		android:layout_weight="1"
-    		android:orientation="vertical"
-    		android:layout_gravity="center_vertical"
-            >
-            <TextView 
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
                 android:id="@+id/time_text"
-             	android:layout_width="wrap_content"
-   			 	android:layout_height="wrap_content"
-   				android:text="100"
-				android:layout_gravity="center_horizontal"   			
-            />
-            <ProgressBar 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="100" />
+
+            <ProgressBar
                 android:id="@+id/progress_bar"
-	            android:layout_height="wrap_content"
-	            android:layout_width="match_parent"
-	            android:max="100"
-	            android:progress="100"
-	            style="@style/Holo.ProgressBar.Horizontal.Light"
-            />
+                style="@style/Holo.ProgressBar.Horizontal.Light"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="100" />
         </LinearLayout>
-        <TextView 
-            android:layout_width="wrap_content"
-   			android:layout_height="wrap_content"
-   			android:text="@string/score"
-   			android:layout_gravity="center_vertical"
-            />
+
         <TextView
-            android:id="@+id/score" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/score" />
+
+        <TextView
+            android:id="@+id/score"
             android:layout_width="0dp"
-   			android:layout_height="wrap_content"
-   			android:layout_weight="1"
-   			android:layout_gravity="center_vertical"
-   			android:gravity="center"
-   			android:text="0"
-            />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="0" />
     </LinearLayout>
-	<LinearLayout 
-	    android:layout_width="match_parent"
-    	android:layout_height="wrap_content"
-    	android:orientation="horizontal"
-	    >
-	    <ImageView 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/refresh"
             android:layout_width="wrap_content"
-    		android:layout_height="wrap_content"
-    		android:src="@drawable/refresh"
-    		android:id="@+id/refresh"
-            />
-	    <TextSwitcher 
-	        android:layout_width="wrap_content"
-    		android:layout_height="wrap_content"
-    		android:text="2"
-    		android:id="@+id/refresh_switcher"
-    		android:layout_gravity="center_vertical"
-    		android:inAnimation="@anim/slide_top_in"
-    		android:outAnimation="@anim/slide_top_out"
-	        />
-	  	<TextSwitcher 
-	  	    android:id="@+id/text_switcher"
-	  	    android:layout_width="0dp"
-    		android:layout_height="wrap_content"
-    		android:layout_weight="1"
-    		android:inAnimation="@anim/in_animation"
-    		android:outAnimation="@anim/out_animation"
-    		android:layout_gravity="center_vertical"
-    		android:gravity="center"
-	  	    />
-	  	<TextSwitcher 
-	        android:layout_width="wrap_content"
-    		android:layout_height="wrap_content"
-    		android:text="2"
-    		android:id="@+id/search_switcher"
-    		android:layout_gravity="center_vertical"
-    		android:inAnimation="@anim/slide_top_in"
-    		android:outAnimation="@anim/slide_top_out"
-	        />
-	  	<ImageView 
+            android:layout_height="wrap_content"
+            android:src="@drawable/refresh" />
+
+        <TextSwitcher
+            android:id="@+id/refresh_switcher"
             android:layout_width="wrap_content"
-    		android:layout_height="wrap_content"
-    		android:src="@drawable/search"
-    		android:id="@+id/search"
-            />
-	    
-	</LinearLayout>
-	
-	<RelativeLayout 
-	    android:layout_width="match_parent"
-	    android:layout_height="0dp"
-	    android:layout_weight="1"
-	    android:id="@+id/game_layout"
-	    >
-	  	
-	  	<RelativeLayout 
-	  	    android:layout_width="match_parent"
-	  	    android:layout_height="match_parent"
-	  	    android:id="@+id/time_up_layout"
-	  	    >
-	  	    <ImageView 
-	  	        android:layout_width="wrap_content"
-	  	    	android:layout_height="wrap_content"
-	  	    	android:id="@+id/time_up_image"
-	  	    	android:src="@drawable/time_up"
-	  	    	android:layout_centerInParent="true"
-	  	        />
-	  	    <TextView 
-	  	        android:layout_width="wrap_content"
-	  	    	android:layout_height="wrap_content"
-	  	    	android:text="@string/game_over"
-	  	    	android:textSize="30sp"
-	  	    	android:layout_centerHorizontal="true"
-	  	    	android:layout_above="@id/time_up_image"
-	  	    	android:id="@+id/time_up_text"
-	  	        />
-	  	    <TextView 
-	  	        android:layout_width="wrap_content"
-	  	    	android:layout_height="wrap_content"
-	  	    	android:text="@string/time_up"
-	  	    	android:textSize="30sp"
-	  	    	android:layout_centerHorizontal="true"
-	  	    	android:layout_above="@id/time_up_text"
-	  	        />
-	  	    <Button 
-	  	    	android:layout_centerHorizontal="true"
-  	         	android:layout_width="wrap_content"
-	  	    	android:layout_height="wrap_content"
-	  	    	android:text="@string/play_again"
-	  	    	android:layout_below="@id/time_up_image"
-	  	    	android:onClick="timeUpPlayAgain"
-	  	        />
-	  	</RelativeLayout>
-	  	
-	  	<RelativeLayout 
-	  	    android:layout_width="match_parent"
-	  	    android:layout_height="match_parent"
-	  	    android:id="@+id/victory_layout"
-	  	    >
-	  	    <ImageView 
-	  	        android:layout_width="wrap_content"
-	  	    	android:layout_height="wrap_content"
-	  	    	android:id="@+id/victory_image"
-	  	    	android:src="@drawable/victory"
-	  	    	android:layout_centerInParent="true"
-	  	        />
-	  	    <TextView 
-	  	        android:layout_width="wrap_content"
-	  	    	android:layout_height="wrap_content"
-	  	    	android:text="@string/victory"
-	  	    	android:textSize="30sp"
-	  	    	android:layout_centerHorizontal="true"
-	  	    	android:layout_above="@id/victory_image"
-	  	        />
-	  	    <LinearLayout 
-	  	        android:layout_width="match_parent"
-	  	    	android:layout_height="wrap_content"
-	  	    	android:orientation="horizontal"
-	  	    	android:layout_below="@id/victory_image"
-	  	    	android:id="@+id/header"
-	  	        >
-	  	        <TextView 
-	  	            android:layout_width="0dp"
-	  	    		android:layout_height="wrap_content"
-	  	    		android:layout_weight="1"
-	  	    		android:text="@string/time"
-	  	    		android:gravity="center"
-	  	            />
-	  	        <TextView 
-	  	            android:layout_width="0dp"
-	  	    		android:layout_height="wrap_content"
-	  	    		android:layout_weight="1"
-	  	    		android:text="@string/score"
-	  	    		android:gravity="center"
-	  	            />
-	  	    </LinearLayout>
-	  	    <LinearLayout 
-	  	        android:layout_width="match_parent"
-	  	    	android:layout_height="wrap_content"
-	  	    	android:orientation="horizontal"
-	  	    	android:layout_below="@id/header"
-	  	    	android:id="@+id/data"
-	  	        >
-	  	        <TextView 
-	  	            android:layout_width="0dp"
-	  	    		android:layout_height="wrap_content"
-	  	    		android:layout_weight="1"
-	  	    		android:text="0"
-	  	    		android:id="@+id/victory_time"
-	  	    		android:gravity="center"
-	  	            />
-	  	        <TextView 
-	  	            android:layout_width="0dp"
-	  	    		android:layout_height="wrap_content"
-	  	    		android:layout_weight="1"
-	  	    		android:text="0"
-	  	    		android:id="@+id/victory_score"
-	  	    		android:gravity="center"
-	  	            />
-	  	    </LinearLayout>
-	  	    <Button 
-	  	    	android:layout_centerHorizontal="true"
-  	         	android:layout_width="wrap_content"
-	  	    	android:layout_height="wrap_content"
-	  	    	android:text="@string/play_again"
-	  	    	android:layout_below="@id/data"
-	  	    	android:onClick="timeUpPlayAgain"
-	  	        />
-	  	</RelativeLayout>
-	  	
-	    <com.johnbear724.linkgame.view.GameView 
-		    android:layout_width="315dp"
-	    	android:layout_height="440dp"
-	    	android:layout_centerInParent="true"
-	    	android:id="@+id/game_view"
-		    />
-	    <TextView
-	        android:layout_width="match_parent"
-    		android:layout_height="match_parent"
-    		android:textSize="30sp"
-    		android:id="@+id/startText"
-    		android:text="@string/touch_start"
-    		android:gravity="center"
-    		android:layout_centerInParent="true"
-	        />
-	</RelativeLayout>
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:inAnimation="@anim/slide_top_in"
+            android:outAnimation="@anim/slide_top_out"
+            android:text="2" />
+
+        <TextSwitcher
+            android:id="@+id/text_switcher"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:inAnimation="@anim/in_animation"
+            android:outAnimation="@anim/out_animation" />
+
+        <TextSwitcher
+            android:id="@+id/search_switcher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:inAnimation="@anim/slide_top_in"
+            android:outAnimation="@anim/slide_top_out"
+            android:text="2" />
+
+        <ImageView
+            android:id="@+id/search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/search" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/game_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <RelativeLayout
+            android:id="@+id/time_up_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/time_up_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/time_up" />
+
+            <TextView
+                android:id="@+id/time_up_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/time_up_image"
+                android:layout_centerHorizontal="true"
+                android:text="@string/game_over"
+                android:textSize="30sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/time_up_text"
+                android:layout_centerHorizontal="true"
+                android:text="@string/time_up"
+                android:textSize="30sp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/time_up_image"
+                android:layout_centerHorizontal="true"
+                android:onClick="timeUpPlayAgain"
+                android:text="@string/play_again" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/victory_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/victory_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/victory" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/victory_image"
+                android:layout_centerHorizontal="true"
+                android:text="@string/victory"
+                android:textSize="30sp" />
+
+            <LinearLayout
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/victory_image"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/time" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/score" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/data"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/header"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/victory_time"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="0" />
+
+                <TextView
+                    android:id="@+id/victory_score"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="0" />
+            </LinearLayout>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/data"
+                android:layout_centerHorizontal="true"
+                android:onClick="timeUpPlayAgain"
+                android:text="@string/play_again" />
+        </RelativeLayout>
+
+        <com.johnbear724.linkgame.view.GameView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_margin="@dimen/game_view_margin"
+            android:id="@+id/game_view" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="30sp"
+            android:id="@+id/startText"
+            android:text="@string/touch_start"
+            android:gravity="center"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
 
 </LinearLayout>

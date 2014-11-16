@@ -4,9 +4,11 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-
 import com.johnbear724.linkgame.object.Piece;
 
+/**
+ * 消除动画
+ */
 public class RemoveAnimationPiece implements AnimationPiece{
     
     private float x;

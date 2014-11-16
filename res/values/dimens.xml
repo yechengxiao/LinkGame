@@ -4,4 +4,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <dimen name="piece_size">40dp</dimen>
+    <dimen name="game_view_margin">3dp</dimen>
+
 </resources>

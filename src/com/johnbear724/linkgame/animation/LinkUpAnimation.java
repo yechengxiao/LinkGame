@@ -1,14 +1,12 @@
 package com.johnbear724.linkgame.animation;
 
+import android.graphics.*;
+
 import java.util.List;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.Shader;
-
+/**
+ * 连线动画
+ */
 public class LinkUpAnimation implements AnimationPiece{
 
     private Paint paint;

@@ -1,58 +1,71 @@
 package com.johnbear724.linkgame.core;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.graphics.Point;
-import android.util.Log;
 import android.util.Pair;
 import android.util.SparseArray;
-
 import com.johnbear724.linkgame.object.LinkInfo;
 import com.johnbear724.linkgame.object.Map;
 import com.johnbear724.linkgame.object.Piece;
 import com.johnbear724.linkgame.util.ImageUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * 该类主要处理游戏逻辑
+ */
 public class GameService {
     
     private GameConfig gameConfig;
     private Piece[][] map;
     
     public GameService(GameConfig gameConfig) {
-        // TODO Auto-generated constructor stub
         this.gameConfig = gameConfig;
-        createMap();
     }
-    
+
+    /**
+     * 创建一个游戏地图
+     * @return 储存地图信息的数组
+     */
     public Piece[][] createMap() {
-        List<Integer> mapList = new Map(gameConfig.getRows(), gameConfig.getColumns(), ImageUtil.getImageValues().size()).getMap();
-        Piece[][] newMap = new Piece[gameConfig.getRows()][gameConfig.getColumns()]; 
-        
-        int y = gameConfig.getBeginY();
-        int x = gameConfig.getBeginX();
+        int rows = gameConfig.getRows();
+        int columns = gameConfig.getColumns();
+        int beginY = gameConfig.getBeginY();
+        int beginX = gameConfig.getBeginX();
+        int pieceWidth = gameConfig.getPieceWidth();
+        int pieceHeight = gameConfig.getPieceHeight();
+        List<Integer> mapList = new Map(rows, columns, ImageUtil.getImageValues().size()).getMap();
+        Piece[][] newMap = new Piece[rows][columns];
+
         int location = 0;
-        for(int i = 0; i < gameConfig.getRows(); i++) {
-            x = gameConfig.getBeginX();
-            for(int j = 0; j < gameConfig.getColumns(); j++) {
+        int x = beginX;
+        int y = beginY;
+        for(int i = 0; i < rows; i++) {
+            x = beginX;
+            for(int j = 0; j < columns; j++) {
                 Piece piece = new Piece(x, y, i, j, mapList.get(location++), gameConfig.getContext().getResources());
                 newMap[i][j] = piece;
-                x += GameConfig.PIECE_WIDTH;
+                x += pieceWidth;
             }
-            y += GameConfig.PIECE_HEIGHT;
+            y += pieceHeight;
         }
-        
-        this.map = newMap;
-        return this.map;
+        map = newMap;
+        return map;
     }
     
     public Piece checkSelected(float x, float y) {
-        int selectedColumn = (int) ((x - gameConfig.getBeginX()) / GameConfig.PIECE_WIDTH);    
-        int selectedRow = (int) ((y - gameConfig.getBeginY()) / GameConfig.PIECE_HEIGHT);    
+        int rows = gameConfig.getRows();
+        int columns = gameConfig.getColumns();
+        int beginX = gameConfig.getBeginX();
+        int beginY = gameConfig.getBeginY();
+        int pieceWidth = gameConfig.getPieceWidth();
+        int pieceHeight = gameConfig.getPieceHeight();
+        int selectedColumn = (int) ((x - beginX) / pieceWidth);
+        int selectedRow = (int) ((y - beginY) / pieceHeight);
         selectedColumn = selectedColumn < 0 ? 0 : selectedColumn;
-        selectedColumn = selectedColumn > (gameConfig.getColumns() - 1) ? (gameConfig.getColumns() - 1) : selectedColumn;
+        selectedColumn = selectedColumn > (columns - 1) ? (columns- 1) : selectedColumn;
         selectedRow = selectedRow < 0 ? 0 : selectedRow;
-        selectedRow = selectedRow > (gameConfig.getRows() - 1) ? (gameConfig.getRows() - 1) : selectedRow;
+        selectedRow = selectedRow > (rows - 1) ? (rows - 1) : selectedRow;
         return map[selectedRow][selectedColumn];
     }
     //FIXME 有时连线不是最近距离，比较远
@@ -111,7 +124,7 @@ public class GameService {
         }
         
         if(linkUpList.size() != 0) {
-            return linkUpList.valueAt(0).getLocationPoint(linkMap);
+            return linkUpList.valueAt(0).getLocationPoint(linkMap, gameConfig);
         } else {
             return null;
         }
@@ -148,7 +161,16 @@ public class GameService {
         }
         return indexList;
     }
-    
+
+    /**
+     * 判断两个元素是否可连接
+     * @param oneRow
+     * @param oneColumn
+     * @param twoRow
+     * @param twoColumn
+     * @param pieces
+     * @return
+     */
     public boolean isLinkUp(int oneRow, int oneColumn, int twoRow, int twoColumn, Piece[][] pieces) {
         int status = 0;
         if(oneRow == twoRow) {
@@ -179,26 +201,33 @@ public class GameService {
     
     public Piece[][] getOuterMap(Piece[][] pieces) {
         int indent = 35;
-        Piece[][] outerMap = new Piece[pieces.length + 2][pieces[0].length + 2];
-        outerMap[0][0] = new Piece(gameConfig.getBeginX() - GameConfig.PIECE_WIDTH + 0 * GameConfig.PIECE_WIDTH + indent, gameConfig.getBeginY() - GameConfig.PIECE_HEIGHT + indent, 0, 0, -1, null);
+        int beginX = gameConfig.getBeginX();
+        int beginY = gameConfig.getBeginY();
+        int width = gameConfig.getPieceWidth();
+        int height = gameConfig.getPieceHeight();
+        int rows = pieces.length;
+        int columns = pieces[0].length;
+
+        Piece[][] outerMap = new Piece[rows + 2][columns + 2];
+        outerMap[0][0] = new Piece(beginX - width + 0 * width + indent, beginY - height+ indent, 0, 0, -1, null);
         for(int i = 1; i < (outerMap[0].length - 1); i++) {
-            outerMap[0][i] = new Piece(gameConfig.getBeginX() - GameConfig.PIECE_WIDTH + i * GameConfig.PIECE_WIDTH, gameConfig.getBeginY() - GameConfig.PIECE_HEIGHT + indent, 0, i, -1, null);
+            outerMap[0][i] = new Piece(beginX - width + i * width, beginY - height + indent, 0, i, -1, null);
         }
-        outerMap[0][outerMap[0].length - 1] = new Piece(gameConfig.getBeginX() - GameConfig.PIECE_WIDTH + (outerMap[0].length - 1) * GameConfig.PIECE_WIDTH - indent, gameConfig.getBeginY() - GameConfig.PIECE_HEIGHT + indent, 0, outerMap[0].length - 1, -1, null);
+        outerMap[0][outerMap[0].length - 1] = new Piece(beginX - width + (outerMap[0].length - 1) * width - indent, beginY - height + indent, 0, outerMap[0].length - 1, -1, null);
         int mapI = 0;
         for(int i = 1; i < (outerMap.length - 1); i++) {
-            outerMap[i][0] = new Piece(gameConfig.getBeginX() - GameConfig.PIECE_WIDTH + indent, map[mapI][0].getY(), i, 0, -1, null);
+            outerMap[i][0] = new Piece(beginX - width + indent, map[mapI][0].getY(), i, 0, -1, null);
             for(int j = 0; j < pieces[0].length; j++) {
                 outerMap[i][j + 1] = pieces[mapI][j];
             }
-            outerMap[i][outerMap[0].length - 1] = new Piece(map[mapI][map[mapI].length - 1].getX() + GameConfig.PIECE_WIDTH - indent, map[mapI][0].getY(), i, outerMap[0].length - 1, -1, null);
+            outerMap[i][outerMap[0].length - 1] = new Piece(map[mapI][map[mapI].length - 1].getX() + width - indent, map[mapI][0].getY(), i, outerMap[0].length - 1, -1, null);
             mapI++;
         }
-        outerMap[outerMap.length - 1][0] = new Piece(gameConfig.getBeginX() - GameConfig.PIECE_WIDTH + 0 * GameConfig.PIECE_WIDTH + indent, map[map.length - 1][0].getY() + GameConfig.PIECE_HEIGHT - indent, outerMap.length - 1, 0, -1, null);
+        outerMap[outerMap.length - 1][0] = new Piece(beginX - width + 0 * width + indent, map[map.length - 1][0].getY() + height - indent, outerMap.length - 1, 0, -1, null);
         for(int i = 1; i < (outerMap[0].length - 1); i++) {
-            outerMap[outerMap.length - 1][i] = new Piece(gameConfig.getBeginX() - GameConfig.PIECE_WIDTH + i * GameConfig.PIECE_WIDTH, map[map.length - 1][0].getY() + GameConfig.PIECE_HEIGHT - indent, outerMap.length - 1, i, -1, null);
+            outerMap[outerMap.length - 1][i] = new Piece(beginX - width + i * width, map[map.length - 1][0].getY() + height - indent, outerMap.length - 1, i, -1, null);
         }
-        outerMap[outerMap.length - 1][outerMap[0].length - 1] = new Piece(gameConfig.getBeginX() - GameConfig.PIECE_WIDTH + (outerMap[0].length - 1) * GameConfig.PIECE_WIDTH - indent, map[map.length - 1][0].getY() + GameConfig.PIECE_HEIGHT - indent, outerMap.length - 1, (outerMap[0].length - 1), -1, null);
+        outerMap[outerMap.length - 1][outerMap[0].length - 1] = new Piece(beginX - width + (outerMap[0].length - 1) * width - indent, map[map.length - 1][0].getY() + height - indent, outerMap.length - 1, (outerMap[0].length - 1), -1, null);
         return outerMap; 
     }
     
@@ -327,15 +356,15 @@ public class GameService {
         return null;
     }
     
-    public List<Pair<Integer, Integer>> findLinkable(Piece[][] linkMap, int x, int y) {
-        for(int i = 0; i < linkMap.length; i++) {
-            if(i == x) {
-                
-            } else if(linkMap[i][y].getImageId() == -1){
-                
-            }
-            
-        }
-        return null;
-    }
+//    public List<Pair<Integer, Integer>> findLinkable(Piece[][] linkMap, int x, int y) {
+//        for(int i = 0; i < linkMap.length; i++) {
+//            if(i == x) {
+//
+//            } else if(linkMap[i][y].getImageId() == -1){
+//
+//            }
+//
+//        }
+//        return null;
+//    }
 }

@@ -3,10 +3,11 @@ package com.johnbear724.linkgame.object;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
 import com.johnbear724.linkgame.util.ImageUtil;
 
-
+/**
+ * 该类代表游戏中的每一个棋子元素
+ */
 public class Piece {
     
     private float x;
@@ -18,7 +19,6 @@ public class Piece {
     private int rowNum;
     
     public Piece(float x, float y, int rowNum, int columnNum, int imageId, Resources r) {
-        // TODO Auto-generated constructor stub
         this.x = x;
         this.y= y;
         this.rowNum = rowNum;
@@ -55,7 +55,7 @@ public class Piece {
         return imageId;
     }
 
-    public void setImage(int imageId, Resources r) {
+    public void setImageId(int imageId, Resources r) {
         this.imageId = imageId;
         if(imageId != -1) {
             bitmap = BitmapFactory.decodeResource(r, ImageUtil.getImageValues().get(imageId));

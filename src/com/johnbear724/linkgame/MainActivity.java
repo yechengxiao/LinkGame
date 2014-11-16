@@ -1,14 +1,6 @@
 package com.johnbear724.linkgame;
 
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.app.AlertDialog;
-import org.holoeverywhere.widget.ProgressBar;
-import org.holoeverywhere.widget.TextView;
-
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -24,15 +16,27 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextSwitcher;
 import android.widget.ViewSwitcher.ViewFactory;
-
-import com.johnbear724.linkgame.core.GameConfig;
 import com.johnbear724.linkgame.core.GameService;
 import com.johnbear724.linkgame.sound.GameSound;
 import com.johnbear724.linkgame.view.GameView;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.AlertDialog;
+import org.holoeverywhere.widget.ProgressBar;
+import org.holoeverywhere.widget.TextView;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends Activity {
+
+    public static final int Victory = 0x123;
+    public static final int TIMER = 0x1234;
+    public static final int SCOUR_1 = 0x111;
+    public static final int SCOUR_2 = 0x112;
+    public static final int SCOUR_3 = 0x113;
+    public static final int START_TEXT_INVISIBLE = 0x3;
 
     private GameView gameView;
     private ProgressBar progressBar;
@@ -50,8 +54,7 @@ public class MainActivity extends Activity {
     private RelativeLayout victoryLayout;
     private LayoutAnimationController layoutAni;
     private AlertDialog pauseDialog;
-    private GameService gameService; 
-    private Handler handler;
+    private GameService gameService;
     private GameSound gameSound;
     private Timer timer = new Timer();
     private int time;
@@ -60,7 +63,55 @@ public class MainActivity extends Activity {
     private int combo;
     private int refreshNum;
     private int searchNum;
-    
+    private Handler handler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch(msg.what) {
+                case Victory :
+                    showVictory();
+                    break;
+                case TIMER :
+                    time--;
+                    comboTime++;
+                    if(comboTime == 3) {
+                        if(combo != 0) {
+                            textSwitcher.setText("Ready!");
+                        }
+                        combo = 0;
+                        comboTime = 0;
+                    }
+                    if(time == 0) {
+                        setTimer(time);
+                        timer.cancel();
+                        timer = null;
+                        gameView.gameOver();
+                        showTimeUp();
+                        break;
+                    } else if(time <= 10) {
+                        gameView.countAnimation();
+                        setTimer(time);
+                        timeText.setTextColor(Color.RED);
+                        break;
+                    } else {
+                        timeText.setTextColor(Color.GRAY);
+                        setTimer(time);
+                    }
+                    break;
+                case SCOUR_1 :
+                    score(1);
+                    break;
+                case SCOUR_2 :
+                    score(2);
+                    break;
+                case SCOUR_3 :
+                    score(3);
+                    break;
+                case START_TEXT_INVISIBLE :
+                    hideLayout();
+            }
+
+        };
+    };;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +121,6 @@ public class MainActivity extends Activity {
     
     @Override
     protected void onResume() {
-        // TODO Auto-generated method stub
         if(time != 0) {
             startTimer(time);
         }
@@ -80,7 +130,6 @@ public class MainActivity extends Activity {
     
     @Override
     protected void onPause() {
-        // TODO Auto-generated method stub
         if(timer != null) {
             timer.cancel();
             timer = null;
@@ -108,7 +157,6 @@ public class MainActivity extends Activity {
             
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 if(refreshNum == 2 || refreshNum == 1) {
                     refreshNum--;
                     refreshSwitcher.setText(refreshNum + "");
@@ -120,7 +168,6 @@ public class MainActivity extends Activity {
             
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 if(searchNum == 2 || searchNum == 1) {
                     searchNum--;
                     searchSwitcher.setText(searchNum + "");
@@ -132,7 +179,6 @@ public class MainActivity extends Activity {
             
             @Override
             public View makeView() {
-                // TODO Auto-generated method stub
                 TextView tv = new TextView(MainActivity.this);
                 tv.setGravity(Gravity.CENTER);
                 return tv;
@@ -148,56 +194,7 @@ public class MainActivity extends Activity {
         textSwitcher.setFactory(viewFactory);
         textSwitcher.setText("Ready!");
         gameSound = new GameSound(this);
-        gameService = new GameService(new GameConfig(10, 7, 20, 20, this));
         timer = new Timer();
-        handler = new Handler() {
-            public void handleMessage(android.os.Message msg) {
-                switch(msg.what) {
-                case GameConfig.Victory :
-                    showVictory();
-                    break;
-                case GameConfig.TIMER :
-                    time--;
-                    comboTime++; 
-                    if(comboTime == 3) {
-                        if(combo != 0) {
-                            textSwitcher.setText("Ready!");
-                        }
-                        combo = 0;
-                        comboTime = 0;
-                    }
-                    if(time == 0) {
-                        setTimer(time);
-                        timer.cancel();
-                        timer = null;
-                        gameView.gameOver();
-                        showTimeUp();
-                        break;
-                    } else if(time <= 10) {
-                        gameView.countAnimation();
-                        setTimer(time);
-                        timeText.setTextColor(Color.RED);
-                        break;
-                    } else {
-                        timeText.setTextColor(Color.GRAY);
-                        setTimer(time);
-                    }
-                    break;
-                case GameConfig.SCOUR_1 :
-                    score(1);
-                    break;
-                case GameConfig.SCOUR_2 :
-                    score(2);
-                    break;
-                case GameConfig.SCOUR_3 :
-                    score(3);
-                    break;
-                case GameConfig.START_TEXT_INVISIBLE :
-                    hideLayout();
-                }
-                    
-            };
-        };
         pauseDialog = new AlertDialog.Builder(MainActivity.this)
         .setTitle("游戏暂停！！")
 //        .setMessage("游戏暂停！！")
@@ -205,7 +202,6 @@ public class MainActivity extends Activity {
             
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // TODO Auto-generated method stub
 //                MainActivity.this.finish();
                 System.exit(0);
             }
@@ -214,7 +210,6 @@ public class MainActivity extends Activity {
             
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // TODO Auto-generated method stub
                 startGame(100);
             }
         } )
@@ -224,11 +219,10 @@ public class MainActivity extends Activity {
             
             @Override
             public void onDismiss(DialogInterface dialog) {
-                // TODO Auto-generated method stub
                 onResume();
             }
         });
-        gameView.setGame(gameService, gameSound, handler);
+        gameView.setGame(gameSound, handler);
         layoutAni = AnimationUtils.loadLayoutAnimation(this, R.anim.time_up_layout_ani);
         timeUpLayout.setVisibility(View.INVISIBLE);
         victoryLayout.setVisibility(View.INVISIBLE);
@@ -237,7 +231,6 @@ public class MainActivity extends Activity {
             
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 //FIXME 有时调用之后gameView不绘制，触摸也没反应
                 startGame(12);
             }
@@ -273,10 +266,13 @@ public class MainActivity extends Activity {
 //            break;
 //        }
 //    }
-    
-    
-    public void startTimer(int t) {
-        time = t + 1;
+
+    /**
+     * 启动计时器
+     * @param time 需要倒计时的时间
+     */
+    public void startTimer(int time) {
+        this.time = time + 1;
         if(timer != null) {
             timer.cancel();
             timer = null;
@@ -286,18 +282,24 @@ public class MainActivity extends Activity {
             
             @Override
             public void run() {
-                // TODO Auto-generated method stub
-                handler.sendEmptyMessage(GameConfig.TIMER);
+                handler.sendEmptyMessage(TIMER);
             }
         }, 0, 1000);
     }
-    
+
+    /**
+     * 设置计时器的时间显示
+     * @param t 需要显示的事件
+     */
     public void setTimer(int t) {
         time = t;
         timeText.setText(t + "");
         progressBar.setProgress(t);
     }
-    
+
+    /**
+     * 显示时间结束提示
+     */
     public void showTimeUp() {
         gameSound.play(GameSound.TIME_UP, 1, 1, 0, 0, 1);
         timeUpLayout.setVisibility(View.VISIBLE);
@@ -316,7 +318,11 @@ public class MainActivity extends Activity {
         victoryTime.setText("" + (100 - time));
         victoryScore.setText("" + score);
     }
-    
+
+    /**
+     * 显示获得分数的提示
+     * @param level 连击等级
+     */
     public void score(int level) {
         int origin = score;
         combo++;
@@ -342,7 +348,6 @@ public class MainActivity extends Activity {
             
             @Override
             public void onAnimationUpdate(ValueAnimator arg0) {
-                // TODO Auto-generated method stub
                 scoreText.setText((Integer)arg0.getAnimatedValue() + "");
             }
         });

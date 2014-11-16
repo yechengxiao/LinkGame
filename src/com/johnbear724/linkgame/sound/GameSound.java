@@ -1,13 +1,15 @@
 package com.johnbear724.linkgame.sound;
 
-import com.johnbear724.linkgame.R;
-
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.util.SparseIntArray;
+import com.johnbear724.linkgame.R;
 
+/**
+ * 游戏的音效类
+ */
 public class GameSound {
     
     private SparseIntArray soundMap = new SparseIntArray();
@@ -31,7 +33,6 @@ public class GameSound {
     
     
     public GameSound(Context context) {
-        // TODO Auto-generated constructor stub
         soundPool = new SoundPool(14, AudioManager.STREAM_MUSIC, 0);
         mediaPlay = MediaPlayer.create(context, R.raw.play);
         mediaPlay.setLooping(true);

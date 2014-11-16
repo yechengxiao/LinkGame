@@ -1,13 +1,14 @@
 package com.johnbear724.linkgame.object;
 
+import android.graphics.Point;
+import com.johnbear724.linkgame.core.GameConfig;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import android.graphics.Point;
-
-import com.johnbear724.linkgame.core.GameConfig;
-
-
+/**
+ * 处理两个元素连线的信息
+ */
 public class LinkInfo {
     
     private List<Point> pointList = new ArrayList<Point> ();
@@ -38,10 +39,11 @@ public class LinkInfo {
         return pointList.size();
     }
     
-    public List<Point> getLocationPoint(Piece[][] map) {
+    public List<Point> getLocationPoint(Piece[][] map, GameConfig gameConfig) {
         List<Point> pList = new ArrayList<Point> ();
         for(Point p : pointList) {
-            pList.add( new Point((int)map[p.x][p.y].getX() + GameConfig.PIECE_WIDTH / 2 , (int)map[p.x][p.y].getY() + GameConfig.PIECE_HEIGHT / 2));
+            pList.add( new Point((int)map[p.x][p.y].getX() + gameConfig.getPieceWidth() / 2 ,
+                    (int)map[p.x][p.y].getY() + gameConfig.getPieceHeight() / 2));
         }
         return pList; 
     }

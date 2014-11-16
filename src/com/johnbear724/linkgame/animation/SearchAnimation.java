@@ -1,13 +1,12 @@
 package com.johnbear724.linkgame.animation;
 
+import android.graphics.*;
+
 import java.util.List;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Point;
-
+/**
+ * 搜索后高亮可连接单位的动画
+ */
 public class SearchAnimation implements AnimationPiece{
 
     private Paint paint;
@@ -17,14 +16,12 @@ public class SearchAnimation implements AnimationPiece{
     private List<Point> pList;
     
     public SearchAnimation() {
-        // TODO Auto-generated constructor stub
         this.paint = new Paint();
         this.matrix = new Matrix();
     }
     
     @Override
     public void drawAnimation(Canvas canvas) {
-        // TODO Auto-generated method stub
         for(Point p : pList) {
             matrix.setTranslate(p.x, p.y);
             matrix.preScale(scale, scale, bitmap.getWidth() / 2, bitmap.getHeight() / 2);

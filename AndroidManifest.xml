@@ -1,32 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
     package="com.johnbear724.linkgame"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0">
 
-    <uses-sdk
-        android:minSdkVersion="8"
-        android:targetSdkVersion="18" />
+    <uses-sdk android:minSdkVersion="8" />
 
     <application
+        android:name="org.holoeverywhere.app.Application"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:name="org.holoeverywhere.app.Application"
-        android:theme="@style/Holo.Theme.Light" >
+        android:theme="@style/Holo.Theme.Light">
         <activity
             android:name="com.johnbear724.linkgame.MainActivity"
-            android:theme="@style/Holo.Theme.Light.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/Holo.Theme.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:theme="@style/Holo.Theme.Dialog.Light"
-            android:name="com.johnbear724.linkgame.dialog.PauseDialog"
-            android:label="@string/title_activity_pause_dialog" >
         </activity>
     </application>
 

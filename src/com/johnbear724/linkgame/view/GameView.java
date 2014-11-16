@@ -1,21 +1,13 @@
 package com.johnbear724.linkgame.view;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Point;
+import android.graphics.*;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
-
+import com.johnbear724.linkgame.MainActivity;
 import com.johnbear724.linkgame.R;
 import com.johnbear724.linkgame.animation.AnimationPiece;
 import com.johnbear724.linkgame.animation.LinkUpAnimation;
@@ -32,22 +24,36 @@ import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * 游戏的主要显示界面，主要处理棋子的绘制
+ */
 public class GameView extends View {
     
     private Piece[][] map; 
     private Piece selectedPiece;
     private GameService gameService;
     private Bitmap selector;
-    private List<AnimationPiece> aniList = new ArrayList<AnimationPiece> ();
+    private List<AnimationPiece> animationList = new ArrayList<AnimationPiece> ();
     private Handler handler;
     private boolean isStart;
     private GameSound gameSound;
     private int countStreamID;
     private Paint paint;
 
+    public GameView(Context context) {
+        this(context, null);
+    }
+
     public GameView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        // TODO Auto-generated constructor stub
+        this(context, attrs, 0);
+    }
+
+    public GameView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
         this.isStart = false;
         this.selector = BitmapFactory.decodeResource(this.getResources(), R.drawable.selector);
         this.selectedPiece = null;
@@ -63,8 +69,8 @@ public class GameView extends View {
         if(selectedPiece != null) {
             canvas.drawBitmap(selector, selectedPiece.getX(), selectedPiece.getY(), null);
         }
-        if(!aniList.isEmpty()) {
-            for(AnimationPiece aniPiece : aniList) {
+        if(!animationList.isEmpty()) {
+            for(AnimationPiece aniPiece : animationList) {
                 aniPiece.drawAnimation(canvas);
             }
         }
@@ -91,8 +97,8 @@ public class GameView extends View {
             if(pList != null) {
                 linkUpAnimation(selectedPiece, compared, pList);
                 score(pList.size());
-                selectedPiece.setImage(-1, getResources());
-                compared.setImage(-1, getResources());
+                selectedPiece.setImageId(-1, getResources());
+                compared.setImageId(-1, getResources());
                 selectedPiece = null;
             } else {
                 gameSound.play(GameSound.CLICK, 0.7f, 0.7f, 0, 0, 1);
@@ -103,29 +109,33 @@ public class GameView extends View {
         return true;
     }
     
-    public void setGame(GameService gameService, GameSound gameSound, Handler handler) {
-        this.gameService = gameService;
+    public void setGame(GameSound gameSound, Handler handler) {
         this.gameSound = gameSound;
         this.handler = handler;
-        this.map = gameService.getMap();
     }
     
     public void startGame() {
+        if (gameService == null) {
+            gameService = new GameService(new GameConfig(this));
+        }
         isStart = true;
-        if(!gameSound.getPlayer().isPlaying()) {
+        if (!gameSound.getPlayer().isPlaying()) {
             gameSound.getPlayer().start();
         }
-        handler.sendEmptyMessage(GameConfig.START_TEXT_INVISIBLE);
+        handler.sendEmptyMessage(MainActivity.START_TEXT_INVISIBLE);
         map = gameService.createMap();
         selectedPiece = null;
         startAnimator();
     }
     
     private void drawMap(Canvas canvas) {
+        int count = 0;
+        Piece piece = null;
         for(int i = 0; i < gameService.getGameConfig().getRows(); i++) {
             for(int j = 0; j < gameService.getGameConfig().getColumns(); j++) {
+                piece = map[i][j];
                 if(map[i][j].getImageId() != -1) {
-                    canvas.drawBitmap(map[i][j].getBitmap(), map[i][j].getX(), map[i][j].getY(), paint);
+                    canvas.drawBitmap(piece.getBitmap(), piece.getX(), piece.getY(), paint);
                 }
             }
         }
@@ -133,29 +143,31 @@ public class GameView extends View {
     
     private void startAnimator() {
         gameSound.play(GameSound.REFRESH, 2, 2, 0, 0, 1.5f);
+        final int rows = gameService.getGameConfig().getRows();
+        final int columns = gameService.getGameConfig().getColumns();
+
         //FIXME 当该动画还没有结束时再此调用该动画会造成冲突
-        final float[][] yArray = new float[gameService.getGameConfig().getRows()][gameService.getGameConfig().getColumns()] ;
-        for(int i = 0; i < gameService.getGameConfig().getRows(); i++) {
-            for(int j = 0; j < gameService.getGameConfig().getColumns(); j++) {
+        final float[][] yArray = new float[rows][columns];
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j < columns; j++) {
                 yArray[i][j] = map[i][j].getY();
             }
         };
         ValueAnimator ani = ValueAnimator.ofFloat(0, 1);
         final float distance = 64;
-        final float difference =  yArray[0][0] + distance * gameService.getGameConfig().getRows() * gameService.getGameConfig().getColumns();
+        final float difference =  yArray[0][0] + distance * rows * columns;
         ani.addUpdateListener(new AnimatorUpdateListener() {
             
             @Override
             public void onAnimationUpdate(ValueAnimator arg0) {
-                // TODO Auto-generated method stub
-                float beginY = -distance * gameService.getGameConfig().getRows() * gameService.getGameConfig().getColumns() + difference * (Float)arg0.getAnimatedValue();
+                float beginY = -distance * rows * columns + difference * (Float)arg0.getAnimatedValue();
                 int index = 0;
                 boolean reverse = false;
-                for(int i = 0; i < gameService.getGameConfig().getRows(); i++) {
-                    for(int j = 0; j < gameService.getGameConfig().getColumns(); j++) {
+                for(int i = 0; i < rows; i++) {
+                    for(int j = 0; j < columns; j++) {
                         int temp = j;
                         if(reverse) {
-                            j = gameService.getGameConfig().getColumns() - j - 1;
+                            j = columns - j - 1;
                         }
                         if(map[i][j].getImageId() != -1) {
                             float location = beginY + distance * index;
@@ -180,15 +192,14 @@ public class GameView extends View {
         final RemoveAnimationPiece removeAP1 = new RemoveAnimationPiece(one);
         final RemoveAnimationPiece removeAP2 = new RemoveAnimationPiece(two);
         final LinkUpAnimation linkUpAni = new LinkUpAnimation(pList);
-        aniList.add(removeAP1);
-        aniList.add(removeAP2);
-        aniList.add(linkUpAni);
+        animationList.add(removeAP1);
+        animationList.add(removeAP2);
+        animationList.add(linkUpAni);
         ValueAnimator ani = ValueAnimator.ofFloat(0, 1);
         ani.addUpdateListener(new AnimatorUpdateListener() {
             
             @Override
             public void onAnimationUpdate(ValueAnimator arg0) {
-                // TODO Auto-generated method stub
                 float currentValue = (Float)arg0.getAnimatedValue();
                 float currentScale = 1 + currentValue * 1;
                 removeAP1.setScale(currentScale, currentScale);
@@ -204,30 +215,26 @@ public class GameView extends View {
             
             @Override
             public void onAnimationStart(Animator arg0) {
-                // TODO Auto-generated method stub
-                
+
             }
             
             @Override
             public void onAnimationRepeat(Animator arg0) {
-                // TODO Auto-generated method stub
-                
+
             }
             
             @Override
             public void onAnimationEnd(Animator arg0) {
-                // TODO Auto-generated method stub
-                aniList.remove(removeAP1);
-                aniList.remove(removeAP2);
-                aniList.remove(linkUpAni);
+                animationList.remove(removeAP1);
+                animationList.remove(removeAP2);
+                animationList.remove(linkUpAni);
                 if(gameService.isEmpty()) {
-                    handler.sendEmptyMessage(GameConfig.Victory);
+                    handler.sendEmptyMessage(MainActivity.Victory);
                 }
             }
             
             @Override
             public void onAnimationCancel(Animator arg0) {
-                // TODO Auto-generated method stub
             }
         });
         ani.setDuration(500);
@@ -250,7 +257,7 @@ public class GameView extends View {
             countStreamID = 0;
         }
         this.isStart = false;
-        aniList.clear();
+        animationList.clear();
         invalidate();
     }
     
@@ -258,21 +265,21 @@ public class GameView extends View {
         switch(size) {
         case 2:
             gameSound.play(GameSound.COMB_1, 1, 1, 0, 0, 1);
-            handler.sendEmptyMessage(GameConfig.SCOUR_1);
+            handler.sendEmptyMessage(MainActivity.SCOUR_1);
             break;
         case 3:
             gameSound.play(GameSound.COMB_3, 1, 1, 0, 0, 1);
-            handler.sendEmptyMessage(GameConfig.SCOUR_2);
+            handler.sendEmptyMessage(MainActivity.SCOUR_2);
             break;
         case 4:
             gameSound.play(GameSound.COMB_5, 1, 1, 0, 0, 1);
-            handler.sendEmptyMessage(GameConfig.SCOUR_3);
+            handler.sendEmptyMessage(MainActivity.SCOUR_3);
             break;
         }
     }
     
     public void refresh() {
-        aniList.clear();
+        animationList.clear();
         selectedPiece = null;
         gameSound.play(GameSound.SHUFFLE, 1, 1, 0, 0, 1);
         ValueAnimator fadingAni = ObjectAnimator.ofInt(this, "paintAlpha", 255, 0);
@@ -322,59 +329,53 @@ public class GameView extends View {
         Collections.shuffle(mapList);
         for(int i = 0; i < map.length; i ++) {
             for(int j = 0; j < map[0].length; j++) {
-                map[i][j].setImage(mapList.get(i * map[0].length + j), getResources());
+                map[i][j].setImageId(mapList.get(i * map[0].length + j), getResources());
             }
         }
     }
     
     public void search() {
         gameSound.play(GameSound.HINT, 1, 1, 0, 0, 1);
-        final LinkInfo linkI = gameService.findLinkablePiece();
-        if(linkI != null) {
-            final SearchAnimation sAni = new SearchAnimation();
-            sAni.setPList(linkI.getFindPoint(map));
-            sAni.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.hint));
-            ValueAnimator ani = ObjectAnimator.ofFloat(sAni, "scale", 0.7f, 1.2f);
+        final LinkInfo linkInfo = gameService.findLinkablePiece();
+        if(linkInfo != null) {
+            final SearchAnimation searchAnimation = new SearchAnimation();
+            searchAnimation.setPList(linkInfo.getFindPoint(map));
+            searchAnimation.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.hint));
+            ValueAnimator ani = ObjectAnimator.ofFloat(searchAnimation, "scale", 0.7f, 1.2f);
             ani.setDuration(400);
             ani.addListener(new AnimatorListener() {
                 
                 @Override
                 public void onAnimationStart(Animator arg0) {
-                    // TODO Auto-generated method stub
-                    
                 }
                 
                 @Override
                 public void onAnimationRepeat(Animator arg0) {
-                    // TODO Auto-generated method stub
-                    if(map[linkI.getPointOne().x][linkI.getPointOne().y].getImageId() == -1) {
-                        aniList.remove(sAni);
+                    if(map[linkInfo.getPointOne().x][linkInfo.getPointOne().y].getImageId() == -1) {
+                        animationList.remove(searchAnimation);
                     }
                 }
                 
                 @Override
                 public void onAnimationEnd(Animator arg0) {
-                    // TODO Auto-generated method stub
-                    
+
                 }
                 
                 @Override
                 public void onAnimationCancel(Animator arg0) {
-                    // TODO Auto-generated method stub
-                    
+
                 }
             });
             ani.addUpdateListener(new AnimatorUpdateListener() {
                 
                 @Override
                 public void onAnimationUpdate(ValueAnimator arg0) {
-                    // TODO Auto-generated method stub
                     postInvalidate();
                 }
             });
             ani.setRepeatMode(Animation.REVERSE);
             ani.setRepeatCount(Animation.INFINITE);
-            aniList.add(sAni);
+            animationList.add(searchAnimation);
             ani.start();
             invalidate();
         }

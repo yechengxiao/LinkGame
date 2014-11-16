@@ -1,10 +1,10 @@
 package com.johnbear724.linkgame.util;
 
+import com.johnbear724.linkgame.R;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import com.johnbear724.linkgame.R;
 
 public class ImageUtil {
     
@@ -31,7 +31,11 @@ public class ImageUtil {
 //            return null;
 //        }
 //    }
-    
+
+    /**
+     * 获取所有绘制元素图片的 id
+     * @return id列表
+     */
     public static List<Integer> getImageValues()
     {
         Integer[] resourceArray = new Integer[] {
